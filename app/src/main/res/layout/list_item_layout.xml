@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:gravity="center"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:orientation="horizontal">
+    <View
+        android:layout_width="1dip"
+        android:layout_height="match_parent"
+        android:background="#8991e9" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:layout_weight="1"
+        android:id="@+id/tv_id"/>
+    <View
+        android:layout_width="1dip"
+        android:layout_height="match_parent"
+        android:background="#8991e9" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:id="@+id/tv_scan_datas"
+        android:gravity="center"
+        android:maxEms="20"
+        android:textSize="17sp"
+        android:text="1234567890"/>
+    <View
+        android:layout_width="1dip"
+        android:layout_height="match_parent"
+        android:background="#8991e9" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:id="@+id/tv_l"
+        android:text="长"/>
+    <View
+        android:layout_width="1dip"
+        android:layout_height="match_parent"
+        android:background="#8991e9" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/tv_w"
+        android:textSize="17sp"
+        android:gravity="center"
+        android:text="宽"/>
+    <View
+        android:layout_width="1dip"
+        android:layout_height="match_parent"
+        android:background="#8991e9" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/tv_h"
+        android:textSize="17sp"
+        android:gravity="center"
+        android:text="高"/>
+    <View
+        android:layout_width="1dip"
+        android:layout_height="match_parent"
+        android:background="#8991e9" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/tv_g"
+        android:textSize="17sp"
+        android:gravity="center"
+        android:text="重量"/>
+    <View
+        android:layout_width="1dip"
+        android:layout_height="match_parent"
+        android:background="#8991e9" />
+
+</LinearLayout>
