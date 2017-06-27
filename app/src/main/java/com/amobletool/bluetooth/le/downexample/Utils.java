@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.amobletool.bluetooth.le;
+package com.amobletool.bluetooth.le.downexample;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
@@ -128,7 +128,7 @@ public class Utils {
 	}
 
 	private static String getHashMapValue(HashMap<Integer, String> hashMap,
-			int number) {
+                                          int number) {
 		String result = hashMap.get(number);
 		if (TextUtils.isEmpty(result)) {
 			List<Integer> numbers = getElement(number);

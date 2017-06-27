@@ -9,12 +9,16 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -44,7 +48,9 @@ public class AmoComActivity extends Activity {
     private static infoEntity infoEntity;
     private TextView tvRssi;
     private static int mPosition;
-
+    private Button btnSend;
+    private EditText etSend;
+    private TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +58,16 @@ public class AmoComActivity extends Activity {
         registerBoradcastReceiver();
         listView = (ListView) findViewById(R.id.lv_showdatas);
         tvRssi = (TextView) findViewById(R.id.tv_rssi);
+        etSend= (EditText) findViewById(R.id.et_sen);
+        btnSend= (Button) findViewById(R.id.btn_send);
+        textView= (TextView) findViewById(R.id.tv_stada);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                  Send_Bytes(Utils.HexString2Bytes(etSend.getText().toString()));
+//                Send_Bytes(succeed_cmd);
+            }
+        });
         myAdapter = new MyAdapter(this);
 
         listView.setAdapter(myAdapter);
@@ -145,10 +161,11 @@ public class AmoComActivity extends Activity {
             } else if (action.equals(ACTION_CONNECT)) {
                 int status = intent.getIntExtra("CONNECT_STATUC", 0);
                 if (status == 0) {
-                    getActionBar().setTitle("已断开连接");
+                    Toast.makeText(AmoComActivity.this,"已断开连接",Toast.LENGTH_SHORT).show();
+                    textView.setText("已断开连接");
                     finish();
                 } else {
-                    getActionBar().setTitle("已连接");
+                    textView.setText("已连接");
                 }
             }
         }
@@ -163,7 +180,48 @@ public class AmoComActivity extends Activity {
         registerReceiver(mBroadcastReceiver, myIntentFilter);
     }
 
+    void senddata() {
+        boolean hex_flag = true;
 
+        String s1 = etSend.getText().toString();
+        for (int i = 0; i < s1.length(); i++) {
+            char charV = s1.charAt(i);
+            if((charV >= '0' && charV <= '9') || (charV >= 'a' && charV <= 'f') || (charV >= 'A' && charV <= 'F'))
+            {
+
+            }
+            else
+            {
+                hex_flag = false;
+            }
+        }
+
+        if(hex_flag)
+        {
+            if(0 == s1.length()%2)
+            {
+                byte bytes[] = Utils.hexStringToBytes(s1);
+
+                // 分包发送 每包最大18个字节
+                Send_Bytes(bytes);
+
+            }
+            else
+            {
+                Toast toast = Toast.makeText(getApplicationContext(), "【错误】: 输入的不是完整的 16进制",
+                        1500);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            }
+        }
+        else
+        {
+            Toast toast = Toast.makeText(getApplicationContext(), "【错误】: 输入的字符不是 16进制",
+                    1500);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        }
+    }
     /**
      * 分包发送 每包最大18个字节
      *
@@ -187,7 +245,7 @@ public class AmoComActivity extends Activity {
                 bytes_sub[i] = bytes[cur_pos + i];
             }
             cur_pos += lenSub;
-            DeviceScanActivity.writeChar6_in_bytes(bytes_sub);//发送 命令
+            DeviceScanActivity.writeChar3_in_bytes(bytes_sub);//发送 命令
             // 延时 一会
             try {
                 Thread.sleep(40);
@@ -333,7 +391,7 @@ public class AmoComActivity extends Activity {
             byte[] midbytes = str.getBytes();
             String HexStr = Utils.bytesToHexString(midbytes);
             // Text_Recv.append(HexStr);
-        } else if (uuid.equals(DeviceScanActivity.UUID_CHAR6)) { // amomcu 的串口透传
+        } else if (uuid.equals(DeviceScanActivity.UUID_CHAR3)) { // amomcu 的串口透传
 
             SimpleDateFormat formatter = new SimpleDateFormat(
                     "HH:mm:ss ");

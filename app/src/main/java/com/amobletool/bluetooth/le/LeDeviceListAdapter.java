@@ -70,7 +70,7 @@ public class LeDeviceListAdapter extends BaseAdapter {
 		ViewHolder viewHolder;
 		// General ListView optimization code.
 		if (view == null) {
-			view = mInflator.inflate(R.layout.listitem_device, null);
+			view = mInflator.inflate(R.layout.listitem_device2, null);
 			viewHolder = new ViewHolder();
 			viewHolder.deviceAddress = (TextView) view
 					.findViewById(R.id.device_address);
