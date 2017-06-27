@@ -37,6 +37,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amobletool.bluetooth.le.R;
+
 import java.util.ArrayList;
 
 /**

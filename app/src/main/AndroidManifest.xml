@@ -39,7 +39,7 @@ limitations under the License.
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light">
         <activity
-            android:name="DeviceScanActivity"
+            android:name=".downexample.DeviceScanActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,7 +50,7 @@ limitations under the License.
 
 
         <activity android:name=".downexample.DeviceControlActivity"/>
-        <activity android:name=".downexample.DeviceScanActivity"/>
+        <activity android:name=".DeviceScanActivity"/>
         <service android:name=".downexample.BluetoothLeService" android:enabled="true"/>
     </application>
 </manifest>

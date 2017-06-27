@@ -27,10 +27,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,14 +38,17 @@ import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
+import com.amobletool.bluetooth.le.R;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.bluetooth.le.BluetoothLeService.ACTION_DATA_AVAILABLE;
-import static com.example.bluetooth.le.BluetoothLeService.ACTION_GATT_CONNECTED;
-import static com.example.bluetooth.le.BluetoothLeService.ACTION_GATT_DISCONNECTED;
+import static com.amobletool.bluetooth.le.downexample.BluetoothLeService.ACTION_DATA_AVAILABLE;
+import static com.amobletool.bluetooth.le.downexample.BluetoothLeService.ACTION_GATT_CONNECTED;
+import static com.amobletool.bluetooth.le.downexample.BluetoothLeService.ACTION_GATT_DISCONNECTED;
+
 
 /**
  * For a given BLE device, this Activity provides the user interface to connect, display data,
@@ -55,7 +56,6 @@ import static com.example.bluetooth.le.BluetoothLeService.ACTION_GATT_DISCONNECT
  * communicates with {@code BluetoothLeService}, which in turn interacts with the
  * Bluetooth LE API.
  */
-@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class DeviceControlActivity extends Activity {
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
 
@@ -446,7 +446,6 @@ public class DeviceControlActivity extends Activity {
     public static String UUID_TEMPERATURE = "00002a1c-0000-1000-8000-00805f9b34fb";
     public static String UUID_0XFFA6 = "0000ffa6-0000-1000-8000-00805f9b34fb";
     public static String UUID_0XFFA3 = "0000ffa6-0000-1000-8000-00805f9b34fb";
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 //    private void displayGattServices(List<BluetoothGattService> gattServices) {
 //        if (gattServices == null)
 //            return;
