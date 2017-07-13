@@ -6,17 +6,18 @@ import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.amobletool.bluetooth.le.R;
 import com.amobletool.bluetooth.le.downexample.mvp.MVPBaseActivity;
 import com.amobletool.bluetooth.le.downexample.utils.KeyboardUtil;
+import com.amobletool.bluetooth.le.downexample.utils.SharedXmlUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,16 +88,25 @@ public class AddActivity extends MVPBaseActivity<AddContract.View, AddPresenter>
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.commit:
+
                 String word2Id = mPresenter.word2Id(name.getText().toString());
                 boolean checked1 = cb1.isChecked();
                 boolean checked2 = cb2.isChecked();
                 boolean checked3 = cb3.isChecked();
                 String guDingBiaoShi = mPresenter.getGuDingBiaoShi(checked1, checked2, checked3);
-//                for (int i = 0; i < spinnerList.size(); i++) {
-//                    int itemID = Integer.parseInt(spinnerList.get(i).getSelectedItem());
-//                    String hexString = Integer.toHexString(itemID);
-//                }
-                Toast.makeText(this, word2Id, Toast.LENGTH_SHORT).show();
+                String renWuCode = mPresenter.getRenWuCode(spinnerList);
+                String[] renWuSplit = renWuCode.split("-");
+                int qingJingCode = SharedXmlUtil.getInstance(this).read("QingJingCode", 0);
+                qingJingCode++;
+                String qingJingStr = Integer.toHexString(qingJingCode);
+                if (qingJingStr.length() == 1) {
+                    qingJingStr = "0" + qingJingStr;
+                }
+                SharedXmlUtil.getInstance(this).write("QingJingCode", qingJingCode);
+                String result = "FF0A" + renWuSplit[1] + qingJingStr + guDingBiaoShi
+                        + word2Id + renWuSplit[0] + renWuSplit[2] + "00";
+                commit.setText(result);
+                Log.d("pk20", "onClick: " + word2Id + "-" + renWuCode + "-" + guDingBiaoShi);
                 break;
         }
     }

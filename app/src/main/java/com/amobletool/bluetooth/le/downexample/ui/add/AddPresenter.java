@@ -1,27 +1,31 @@
 package com.amobletool.bluetooth.le.downexample.ui.add;
 
 import android.text.TextUtils;
+import android.widget.Spinner;
 
 import com.amobletool.bluetooth.le.downexample.MyApp;
 import com.amobletool.bluetooth.le.downexample.bean.Word;
 import com.amobletool.bluetooth.le.downexample.bean.WordDao;
 import com.amobletool.bluetooth.le.downexample.mvp.BasePresenterImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * MVPPlugin
- *  邮箱 784787081@qq.com
+ * 邮箱 784787081@qq.com
  */
 
-public class AddPresenter extends BasePresenterImpl<AddContract.View> implements AddContract.Presenter{
+public class AddPresenter extends BasePresenterImpl<AddContract.View> implements AddContract.Presenter {
 
 
     //字体转成代码
     @Override
     public String word2Id(String str) {
-        if (TextUtils.isEmpty(str)){
+        if (TextUtils.isEmpty(str)) {
             return "000000000000";
         }
-        StringBuffer result=new StringBuffer();
+        StringBuffer result = new StringBuffer();
         int length = str.length();
         for (int i = 0; i < length; i++) {
             String substring = str.substring(i, i + 1);
@@ -30,7 +34,7 @@ public class AddPresenter extends BasePresenterImpl<AddContract.View> implements
             String id = unique.getId();
             result.append(id);
         }
-        int add0=6-length;
+        int add0 = 6 - length;
         for (int i = 0; i < add0; i++) {
             result.append("00");
         }
@@ -40,16 +44,61 @@ public class AddPresenter extends BasePresenterImpl<AddContract.View> implements
     //获取固定标识
     @Override
     public String getGuDingBiaoShi(boolean c1, boolean c2, boolean c3) {
-        int result=0;
-        if (c1){
-            result=result+4;
+        int result = 0;
+        if (c1) {
+            result = result + 4;
         }
-        if (c2){
-            result=result+2;
+        if (c2) {
+            result = result + 2;
         }
-        if (c3){
-            result=result+1;
+        if (c3) {
+            result = result + 1;
         }
-        return "0"+result;
+        return "0" + result;
+    }
+
+    //获取任务的发送代码
+    @Override
+    public String getRenWuCode(List<Spinner> spinnerList) {
+        StringBuffer renWu = new StringBuffer();
+        StringBuffer noRenWu = new StringBuffer();
+        List<String> renWuList = new ArrayList<>();
+
+        for (int i = 0; i < spinnerList.size(); i++) {
+            String select = spinnerList.get(i).getSelectedItem().toString();
+            if (TextUtils.isEmpty(select)) {
+                noRenWu.append("00");
+                continue;
+            }
+            String[] split = select.split(":");
+            if (renWuList.size() == 0) {
+                renWuList.add(split[0]);
+            } else {
+                int j;
+                for (j = 0; j < renWuList.size(); j++) {
+                    if (split[0].equals(renWuList.get(j))) {
+                        noRenWu.append("00");
+                        break;
+                    }
+                }
+                if (j == renWuList.size()) {
+                    renWuList.add(split[0]);
+                }
+            }
+        }
+        int parseInt = 0,parseInt2 = 0;
+        for (int i = 0; i < renWuList.size(); i++) {
+            renWu.append(renWuList.get(i));
+            if (i == 0) {
+                parseInt = Integer.parseInt( renWuList.get(i), 16);
+            }
+            if (i == renWuList.size() - 1) {
+                parseInt2 = Integer.parseInt(  renWuList.get(i), 16);
+            }
+        }
+        int jiaoYan=parseInt+parseInt2;
+        String jiaoYanStr = Integer.toHexString(jiaoYan);
+        int length = renWuList.size() + 1;
+        return renWu + "" + noRenWu + "-0" + length+"-"+jiaoYanStr;
     }
 }
