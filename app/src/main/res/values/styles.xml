@@ -1,0 +1,25 @@
+<resources>
+
+
+    <style name="MainAppTheme" parent="Theme.AppCompat.Light">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="Theme_Light_FullScreenDialogAct" parent="@style/BaseDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:textSize">16.0sp</item>
+        <item name="android:textColor">#ff555555</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+    </style>
+
+    <style name="BaseDialog" parent="@android:style/Theme.Dialog" />
+
+    <style name="MyToggleButton" parent="@android:style/Widget.CompoundButton">
+        <item name="android:button">@drawable/setting_checkbox_button</item>
+    </style>
+</resources>

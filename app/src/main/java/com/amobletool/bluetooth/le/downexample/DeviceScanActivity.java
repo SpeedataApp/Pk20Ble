@@ -145,19 +145,22 @@ public class DeviceScanActivity extends ListActivity {
         mLeDeviceListAdapter.clear();
     }
 
+    //点击列表跳转到DeviceControlActivity
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         System.out.println("==position=="+position);
         final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
         if (device == null) return;
-        final Intent intent = new Intent(this, DeviceControlActivity.class);
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+//        final Intent intent = new Intent(this, DeviceControlActivity.class);
+//        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+//        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
         if (mScanning) {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
             mScanning = false;
         }
-        startActivity(intent);
+        MyApp.getInstance().getDeviceName(device);
+        this.finish();
+//        startActivity(intent);
     }
 
     private void scanLeDevice(final boolean enable) {
@@ -247,7 +250,7 @@ public class DeviceScanActivity extends ListActivity {
         }
     }
 
-    // Device scan callback.
+    // Device scan callback.返蓝牙信息更新到界面
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
 
         @Override

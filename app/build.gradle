@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'org.greenrobot.greendao'
 android {
     compileSdkVersion 23
     buildToolsVersion '25.0.0'
@@ -10,6 +10,10 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.2"
+    }
+    //greendao 配置版本号
+    greendao{
+        schemaVersion 1
     }
     buildTypes {
         release {
@@ -24,4 +28,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'xyz.reginer.baseadapter:baseadapter:1.1.2'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'org.greenrobot:greendao:3.2.0'
 }

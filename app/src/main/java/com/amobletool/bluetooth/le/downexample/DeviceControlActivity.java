@@ -30,15 +30,21 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amobletool.bluetooth.le.R;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -87,38 +93,43 @@ public class DeviceControlActivity extends Activity {
                 finish();
             }
             // Automatically connects to the device upon successful start-up initialization.
+            //在成功启动初始化时自动连接到设备。
             mBluetoothLeService.connect(mDeviceAddress);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mBluetoothLeService = null;
+            Toast.makeText(DeviceControlActivity.this, "ServiceDisconnected", Toast.LENGTH_SHORT).show();
         }
     };
 
-    // Handles various events fired by the Service.
-    // ACTION_GATT_CONNECTED: connected to a GATT server.
-    // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
-    // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
+    // Handles various events fired by the Service.处理由服务触发的各种事件。
+    // ACTION_GATT_CONNECTED: connected to a GATT server.连接到GATT服务器
+    // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.与GATT服务器断开连接
+    // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.发现了GATT服务
     // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
     //                        or notification operations.
+    //从设备接收数据。这可能是阅读的结果或通知操作。
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (ACTION_GATT_CONNECTED.equals(action)) {
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true;
                 updateConnectionState(R.string.connected);
+                //将使原填充的菜单项无效，当用户再次访问菜单时，再次调用onCreateOptionsMenu(Menu menu)。
                 invalidateOptionsMenu();
-            } else if (ACTION_GATT_DISCONNECTED.equals(action)) {
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState(R.string.disconnected);
                 invalidateOptionsMenu();
                 clearUI();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
+                //显示用户界面上所有受支持的服务和特性。
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
-            } else if (ACTION_DATA_AVAILABLE.equals(action)) {
+            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
         }
@@ -128,6 +139,11 @@ public class DeviceControlActivity extends Activity {
     // demonstrates 'Read' and 'Notify' features.  See
     // http://d.android.com/reference/android/bluetooth/BluetoothGatt.html for the complete
     // list of supported characteristic features.
+    // 如果给定的GATT特性被选中，请检查支持的特性。这个示例演示“读”和“通知”功能。
+    // 看到http://d.android.com/reference/android/bluetooth/BluetoothGatt.html的完成
+    // 列表支持的特征特性。
+
+    // 点击未知特性值
     private final ExpandableListView.OnChildClickListener servicesListClickListner =
             new ExpandableListView.OnChildClickListener() {
                 @Override
@@ -137,32 +153,61 @@ public class DeviceControlActivity extends Activity {
                         final BluetoothGattCharacteristic characteristic =
                                 mGattCharacteristics.get(groupPosition).get(childPosition);
                         final int charaProp = characteristic.getProperties();
-                        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-                            // If there is an active notification on a characteristic, clear
-                            // it first so it doesn't update the data field on the user interface.
-                            if (mNotifyCharacteristic != null) {
-                                mBluetoothLeService.setCharacteristicNotification(
-                                        mNotifyCharacteristic, false);
-                                mNotifyCharacteristic = null;
-                            }
-                            mBluetoothLeService.readCharacteristic(characteristic);
-                        }
+//                        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
+//                            // If there is an active notification on a characteristic, clear
+//                            // it first so it doesn't update the data field on the user interface.
+//                            if (mNotifyCharacteristic != null) {
+//                                mBluetoothLeService.setCharacteristicNotification(
+//                                        mNotifyCharacteristic, true);
+//                                mNotifyCharacteristic = null;
+//                            }
+//                            mBluetoothLeService.readCharacteristic(characteristic);
+//                        }
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                            mDataField.setText("No data");
                             mNotifyCharacteristic = characteristic;
-                            mBluetoothLeService.setCharacteristicNotification(
-                                    characteristic, true);
-                            final EditText et = new EditText(DeviceControlActivity.this);
-
+//                            mBluetoothLeService.setCharacteristicNotification(
+//                                    characteristic, true);
+                            LayoutInflater layoutInflater=LayoutInflater
+                                    .from(DeviceControlActivity.this);
+                            View view = layoutInflater.inflate(R.layout.write_dialog, null);
+                            final EditText et= (EditText) view.findViewById(R.id.et);
+                            Button btn1= (Button) view.findViewById(R.id.btn_test1);
+                            Button btn2= (Button) view.findViewById(R.id.btn_test2);
+                            Button btn3= (Button) view.findViewById(R.id.btn_test3);
+                            btn1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    et.setText("FF0A0301011A1B00000000051500000000001A00");
+                                }
+                            });
+                            btn2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    et.setText("FF0A04050104050F10110D050215000000001A00");
+                                }
+                            });
+                            btn3.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    et.setText("FF0A04090716170F10110D050215000000001A00");
+                                }
+                            });
                             new AlertDialog.Builder(DeviceControlActivity.this).setTitle("输入命令")
                                     .setIcon(android.R.drawable.ic_dialog_info)
-                                    .setView(et)
+                                    .setView(view)
                                     .setPositiveButton("发送", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
                                             String input = et.getText().toString();
                                             if (mNotifyCharacteristic != null) {
-                                                byte[] data= Utils.HexString2Bytes(input);//转十六进制
+                                                byte[] data = Utils.HexString2Bytes(input);//转十六进制
+                                                //设置为WRITE_TYPE_NO_RESPONSE，这样速度会快
+//                                                mNotifyCharacteristic.setWriteType
+//                                                        (BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
                                                 mNotifyCharacteristic.setValue(data);
                                                 mBluetoothLeService.wirteCharacteristic(mNotifyCharacteristic);
+//                                                SystemClock.sleep(500);
+//                                                mBluetoothLeService.readCharacteristic(characteristic);
                                             }
                                             try {//下面三句控制弹框的关闭
 
@@ -170,7 +215,7 @@ public class DeviceControlActivity extends Activity {
 
                                                 field.setAccessible(true);
 
-                                                field.set(dialog,true);//true表示要关闭
+                                                field.set(dialog, true);//true表示要关闭
 
                                             } catch (Exception e) {
 
@@ -186,7 +231,7 @@ public class DeviceControlActivity extends Activity {
                     }
                     return false;
                 }
-    };
+            };
     private BluetoothGattCharacteristic mCharacteristicChar3;
 
     private void clearUI() {
@@ -198,7 +243,7 @@ public class DeviceControlActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gatt_services_characteristics);
-
+        EventBus.getDefault().register(this);
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
@@ -237,6 +282,7 @@ public class DeviceControlActivity extends Activity {
         super.onDestroy();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -254,7 +300,7 @@ public class DeviceControlActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.menu_connect:
                 mBluetoothLeService.connect(mDeviceAddress);
                 return true;
@@ -280,9 +326,21 @@ public class DeviceControlActivity extends Activity {
     private void displayData(String data) {
         if (data != null) {
             mDataField.setText(data);
+        }else {
+            mDataField.setText("no data");
         }
     }
 
+    @org.greenrobot.eventbus.Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(MsgEvent mEvent) {
+        String type = mEvent.getType();
+        String msg = (String) mEvent.getMsg();
+        if (type.equals("onCharacteristicRead")) {
+            mDataField.setText("readFailed:"+msg);
+        }else {
+            Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+        }
+    }
     // Demonstrates how to iterate through the supported GATT Services/Characteristics.
     // In this sample, we populate the data structure that is bound to the ExpandableListView
     // on the UI.
@@ -296,6 +354,7 @@ public class DeviceControlActivity extends Activity {
                 = new ArrayList<ArrayList<HashMap<String, String>>>();
         mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
 
+        //0000fff3-0000-1000-8000-00805f9b34fb
         // Loops through available GATT Services.
         for (BluetoothGattService gattService : gattServices) {
             HashMap<String, String> currentServiceData = new HashMap<String, String>();
@@ -330,29 +389,29 @@ public class DeviceControlActivity extends Activity {
                 this,
                 gattServiceData,
                 android.R.layout.simple_expandable_list_item_2,
-                new String[] {LIST_NAME, LIST_UUID},
-                new int[] { android.R.id.text1, android.R.id.text2 },
+                new String[]{LIST_NAME, LIST_UUID},
+                new int[]{android.R.id.text1, android.R.id.text2},
                 gattCharacteristicData,
                 android.R.layout.simple_expandable_list_item_2,
-                new String[] {LIST_NAME, LIST_UUID},
-                new int[] { android.R.id.text1, android.R.id.text2 }
+                new String[]{LIST_NAME, LIST_UUID},
+                new int[]{android.R.id.text1, android.R.id.text2}
         );
         mGattServicesList.setAdapter(gattServiceAdapter);
 
 
-        for (BluetoothGattService gattService : gattServices) {
-            uuid = gattService.getUuid().toString();
-            Log.d(TAG, "displayGattServices: "+uuid);
-            List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
-            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
-                uuid = gattCharacteristic.getUuid().toString();
-                if (uuid.contains("fff4")) {
-                    Log.e("console", "2gatt Characteristic: " + uuid);
-                    mBluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);
-                    mBluetoothLeService.readCharacteristic(gattCharacteristic);
-                }
-            }
-        }
+//        for (BluetoothGattService gattService : gattServices) {
+//            uuid = gattService.getUuid().toString();
+//            Log.d(TAG, "displayGattServices: " + uuid);
+//            List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
+//            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+//                uuid = gattCharacteristic.getUuid().toString();
+//                if (uuid.contains("fff4")) {
+//                    Log.e("console", "2gatt Characteristic: " + uuid);
+//                    mBluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);
+//                    mBluetoothLeService.readCharacteristic(gattCharacteristic);
+//                }
+//            }
+//        }
     }
 
     // Demonstrates how to iterate through the supported GATT
@@ -415,7 +474,7 @@ public class DeviceControlActivity extends Activity {
 //            }
 //        }
 //    }static public void writeChar3_in_bytes(byte bytes[]) {
-        // byte[] writeValue = new byte[1];
+    // byte[] writeValue = new byte[1];
 //        Log.i(TAG, "gattCharacteristic_char3 = " + mCharacteristicChar3);
 //        if (mCharacteristicChar3 != null) {
 //            boolean bRet = mCharacteristicChar3.setValue(bytes);
@@ -446,7 +505,8 @@ public class DeviceControlActivity extends Activity {
     public static String UUID_TEMPERATURE = "00002a1c-0000-1000-8000-00805f9b34fb";
     public static String UUID_0XFFA6 = "0000ffa6-0000-1000-8000-00805f9b34fb";
     public static String UUID_0XFFA3 = "0000ffa6-0000-1000-8000-00805f9b34fb";
-//    private void displayGattServices(List<BluetoothGattService> gattServices) {
+
+    //    private void displayGattServices(List<BluetoothGattService> gattServices) {
 //        if (gattServices == null)
 //            return;
 //        BluetoothGattCharacteristic Characteristic_cur = null;

@@ -7,23 +7,28 @@
     >
 
     <Button
-        android:id="@+id/btn1"
-        android:text="@string/main_btn1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/btn2"
-        android:text="@string/main_btn2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/btn3"
-        android:text="@string/main_btn3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
         android:id="@+id/btn4"
-        android:text="@string/main_btn4"
+        android:text="@string/branch_btn4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btn5"
+        android:text="@string/branch_btn5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btn6"
+        android:text="@string/branch_btn6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btn7"
+        android:text="@string/branch_btn7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btn8"
+        android:text="@string/branch_btn8"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

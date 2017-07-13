@@ -8,22 +8,17 @@
 
     <Button
         android:id="@+id/btn1"
-        android:text="@string/main_btn1"
+        android:text="@string/courier_btn1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
         android:id="@+id/btn2"
-        android:text="@string/main_btn2"
+        android:text="@string/courier_btn2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
         android:id="@+id/btn3"
-        android:text="@string/main_btn3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/btn4"
-        android:text="@string/main_btn4"
+        android:text="@string/courier_btn3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

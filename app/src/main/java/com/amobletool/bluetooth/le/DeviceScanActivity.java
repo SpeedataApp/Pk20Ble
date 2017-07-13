@@ -96,7 +96,9 @@ public class DeviceScanActivity extends Activity implements AdapterView.OnItemCl
         listMunu = (ListView) findViewById(R.id.list_munu);
         mHandler = new Handler() ;
         // Use this check to determine whether BLE is supported on the device.
+        //使用此检查来确定是否在设备上支持BLE。
         // Then you can selectively disable BLE-related features.
+        //然后你可以选择性地禁用与之相关的功能。
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
             finish();
@@ -105,10 +107,11 @@ public class DeviceScanActivity extends Activity implements AdapterView.OnItemCl
         }
         // Initializes a Bluetooth adapter. For API level 18 and above, get a
         // reference to BluetoothAdapter through BluetoothManager.
+        //初始化一个蓝牙适配器。对于API级别18和以上，获取参考蓝牙适配器，通过蓝牙管理器。
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
 
-        // Checks if Bluetooth is supported on the device.
+        // Checks if Bluetooth is supported on the device.检查设备上是否支持蓝牙。
         if (mBluetoothAdapter != null) {
             //打开蓝牙
             mBluetoothAdapter.enable();
@@ -230,7 +233,7 @@ public class DeviceScanActivity extends Activity implements AdapterView.OnItemCl
         }
     };
 
-    // Device scan callback.
+    // Device scan callback.这个回调用以展示蓝牙扫描后的结果
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
 
         @Override

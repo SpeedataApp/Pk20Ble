@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:visibility="gone"
+        android:layout_weight="0"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:padding="10dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_weight="5"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/device_name"
+                android:text="Name:PK20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/device_address"
+                android:text="Address:PK20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ToggleButton
+                android:id="@+id/btn_serviceStatus"
+                style="@style/MyToggleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:background="#00000000"
+                android:textOff=""
+                android:textOn="" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:padding="10dp">
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:padding="5dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:clickable="true"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:text="流程下达"
+            android:id="@+id/start"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/start"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:clickable="true"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:text="流程添加"
+            android:id="@+id/add"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/add_black"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</LinearLayout>

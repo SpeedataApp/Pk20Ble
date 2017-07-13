@@ -7,23 +7,18 @@
     >
 
     <Button
-        android:id="@+id/btn1"
-        android:text="@string/main_btn1"
+        android:id="@+id/btn9"
+        android:text="@string/allocate_btn9"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
-        android:id="@+id/btn2"
-        android:text="@string/main_btn2"
+        android:id="@+id/btn10"
+        android:text="@string/allocate_btn10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
-        android:id="@+id/btn3"
-        android:text="@string/main_btn3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/btn4"
-        android:text="@string/main_btn4"
+        android:id="@+id/btn11"
+        android:text="@string/allocate_btn11"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

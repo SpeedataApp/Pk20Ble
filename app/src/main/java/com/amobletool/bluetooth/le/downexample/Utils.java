@@ -269,5 +269,18 @@ public class Utils {
 		return (byte) "0123456789ABCDEF".indexOf(c);
 	}
 
+	public static String b2hexs(byte[] b, int length) {
+		String ret = "";
 
+		for (int i = 0; i < length; ++i) {
+			String hex = Integer.toHexString(b[i] & 255);
+			if (hex.length() == 1) {
+				hex = '0' + hex;
+			}
+
+			ret = ret + hex.toUpperCase();
+		}
+
+		return ret;
+	}
 }

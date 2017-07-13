@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="quest">
+        <item></item>
+        <item>PDA连接蓝牙</item>
+        <item>测量体积重</item>
+        <item>设置上级网点</item>
+        <item>设置目的地条码</item>
+        <item>扫描快件条码</item>
+        <item>扫描主单号</item>
+        <item>扫描子单号</item>
+        <item>扫描中心条码</item>
+        <item>未发送数据发送</item>
+        <item>全部数据发送</item>
+        <item>单条数据发送</item>
+        <item>清除存储空间</item>
+        <item>显示时间</item>
+        <item>蓝牙连接电子秤1</item>
+        <item>蓝牙连接电子秤2</item>
+        <item>测量实际重量1</item>
+        <item>测量实际重量2</item>
+        <item>获取时间</item>
+        <item>显示网点代码</item>
+        <item>显示中心代码</item>
+        <item>记录保存</item>
+        <item>条码扫描+测量体积重</item>
+        <item>判断蓝牙秤情况</item>
+        <item>体积重+实重</item>
+        <item>流程结束</item>
+
+    </string-array>
+
+</resources>
