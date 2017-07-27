@@ -1,6 +1,6 @@
-package com.amobletool.bluetooth.le.downexample.ui.allocate;
+package com.amobletool.bluetooth.le.downexample.ui.set;
 
-import android.content.Context;
+import android.app.Activity;
 
 import com.amobletool.bluetooth.le.downexample.mvp.BasePresenter;
 import com.amobletool.bluetooth.le.downexample.mvp.BaseView;
@@ -10,12 +10,14 @@ import com.amobletool.bluetooth.le.downexample.mvp.BaseView;
  *  邮箱 784787081@qq.com
  */
 
-public class AllocateContract {
+public class SetContract {
     interface View extends BaseView {
         
     }
 
     interface  Presenter extends BasePresenter<View> {
-        
+        void setTime();
+        void setBili(String s);
+        void setZiKu(Activity activity);
     }
 }

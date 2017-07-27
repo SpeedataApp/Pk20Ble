@@ -4,6 +4,8 @@ package com.amobletool.bluetooth.le.downexample.ui.menu;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -17,7 +19,9 @@ import com.amobletool.bluetooth.le.downexample.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.MyApp;
 import com.amobletool.bluetooth.le.downexample.mvp.MVPBaseActivity;
 import com.amobletool.bluetooth.le.downexample.ui.add.AddActivity;
-import com.amobletool.bluetooth.le.downexample.ui.main.MainFragment;
+import com.amobletool.bluetooth.le.downexample.ui.assign.AssignFragment;
+import com.amobletool.bluetooth.le.downexample.ui.set.SetFragment;
+import com.amobletool.bluetooth.le.downexample.ui.show.ShowFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,6 +42,9 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
     private LinearLayout ll;
     private TextView add;
     private TextView start;
+    private TextView show;
+    private String whichFragment = "";
+    private TextView set;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,13 +52,29 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
         setContentView(R.layout.act_menu);
         EventBus.getDefault().register(this);
         initView();
-        openFragment(new MainFragment());
+        openFragment(new ShowFragment());
     }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!TextUtils.isEmpty(whichFragment)) {
+            closeFragment();
+            if ("show".equals(whichFragment)) {
+                openFragment(new ShowFragment());
+            } else if ("assign".equals(whichFragment)){
+                openFragment(new AssignFragment());
+            }else {
+                openFragment(new SetFragment());
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -68,9 +91,17 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
             } else {
                 ll.setVisibility(View.GONE);
             }
-        } else {
+        } else if ("Notification".equals(type)) {
+            Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
+        }else if ("Save6Data".equals(type)){
+            Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
+        }else if ("Save6DataSuccess".equals(type)){
+            MyApp.getInstance().writeCharacteristic6("AA0A020100000000000000000000000000000200");
             Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
         }
+//        else {
+//            Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
+//        }
 
     }
 
@@ -93,6 +124,10 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
         add.setOnClickListener(this);
         start = (TextView) findViewById(R.id.start);
         start.setOnClickListener(this);
+        show = (TextView) findViewById(R.id.show);
+        show.setOnClickListener(this);
+        set = (TextView) findViewById(R.id.set);
+        set.setOnClickListener(this);
     }
 
     @Override
@@ -104,26 +139,95 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
             case R.id.start:
                 changeStartImage();
                 break;
+            case R.id.show:
+                changeShowImage();
+                break;
+            case R.id.set:
+                changeSetImage();
+                break;
         }
     }
 
-    private void changeStartImage() {
-        Drawable addBlack = getResources().getDrawable(R.drawable.add_black);
-        addBlack.setBounds(0, 0, addBlack.getMinimumWidth(), addBlack.getMinimumHeight());
-        add.setCompoundDrawables(null, addBlack, null, null);
-        Drawable startBlue = getResources().getDrawable(R.drawable.start);
-        startBlue.setBounds(0, 0, startBlue.getMinimumWidth(), startBlue.getMinimumHeight());
-        start.setCompoundDrawables(null, startBlue, null, null);
-    }
 
-    private void changeAddImage() {
-        Drawable addBlue = getResources().getDrawable(R.drawable.add);
-        addBlue.setBounds(0, 0, addBlue.getMinimumWidth(), addBlue.getMinimumHeight());
-        add.setCompoundDrawables(null, addBlue, null, null);
+    private void changeShowImage() {
+        Drawable showBlue = getResources().getDrawable(R.drawable.show);
+        showBlue.setBounds(0, 0, showBlue.getMinimumWidth(), showBlue.getMinimumHeight());
+        show.setCompoundDrawables(null, showBlue, null, null);
         Drawable startBlack = getResources().getDrawable(R.drawable.start_black);
         startBlack.setBounds(0, 0, startBlack.getMinimumWidth(), startBlack.getMinimumHeight());
         start.setCompoundDrawables(null, startBlack, null, null);
+        Drawable setBlack = getResources().getDrawable(R.drawable.set_black);
+        setBlack.setBounds(0, 0, setBlack.getMinimumWidth(), setBlack.getMinimumHeight());
+        set.setCompoundDrawables(null, setBlack, null, null);
 
+        closeFragment();
+        openFragment(new ShowFragment());
+        whichFragment = "show";
+    }
+
+    private void changeStartImage() {
+        Drawable showBlack = getResources().getDrawable(R.drawable.show_black);
+        showBlack.setBounds(0, 0, showBlack.getMinimumWidth(), showBlack.getMinimumHeight());
+        show.setCompoundDrawables(null, showBlack, null, null);
+        Drawable startBlue = getResources().getDrawable(R.drawable.start);
+        startBlue.setBounds(0, 0, startBlue.getMinimumWidth(), startBlue.getMinimumHeight());
+        start.setCompoundDrawables(null, startBlue, null, null);
+        Drawable setBlack = getResources().getDrawable(R.drawable.set_black);
+        setBlack.setBounds(0, 0, setBlack.getMinimumWidth(), setBlack.getMinimumHeight());
+        set.setCompoundDrawables(null, setBlack, null, null);
+
+        closeFragment();
+        openFragment(new AssignFragment());
+        whichFragment = "assign";
+    }
+
+    private void changeAddImage() {
+//        Drawable addBlue = getResources().getDrawable(R.drawable.add);
+//        addBlue.setBounds(0, 0, addBlue.getMinimumWidth(), addBlue.getMinimumHeight());
+//        add.setCompoundDrawables(null, addBlue, null, null);
+//        Drawable startBlack = getResources().getDrawable(R.drawable.start_black);
+//        startBlack.setBounds(0, 0, startBlack.getMinimumWidth(), startBlack.getMinimumHeight());
+//        start.setCompoundDrawables(null, startBlack, null, null);
+
+//        closeFragment();
         openAct(this, AddActivity.class);
+    }
+
+    private void changeSetImage() {
+        Drawable showBlack = getResources().getDrawable(R.drawable.show_black);
+        showBlack.setBounds(0, 0, showBlack.getMinimumWidth(), showBlack.getMinimumHeight());
+        show.setCompoundDrawables(null, showBlack, null, null);
+        Drawable startBlack = getResources().getDrawable(R.drawable.start_black);
+        startBlack.setBounds(0, 0, startBlack.getMinimumWidth(), startBlack.getMinimumHeight());
+        start.setCompoundDrawables(null, startBlack, null, null);
+        Drawable setBlue = getResources().getDrawable(R.drawable.set);
+        setBlue.setBounds(0, 0, setBlue.getMinimumWidth(), setBlue.getMinimumHeight());
+        set.setCompoundDrawables(null, setBlue, null, null);
+
+        closeFragment();
+        openFragment(new SetFragment());
+        whichFragment = "set";
+    }
+
+    private long mkeyTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+            case KeyEvent.ACTION_DOWN:
+                if ((System.currentTimeMillis() - mkeyTime) > 2000) {
+                    mkeyTime = System.currentTimeMillis();
+                    Toast.makeText(MenuActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        finish();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.amobletool.bluetooth.le.downexample;
+package com.amobletool.bluetooth.le.downexample.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -33,11 +33,20 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amobletool.bluetooth.le.downexample.MsgEvent;
+import com.amobletool.bluetooth.le.downexample.MyApp;
+import com.amobletool.bluetooth.le.downexample.SampleGattAttributes;
+import com.amobletool.bluetooth.le.downexample.Utils;
+import com.amobletool.bluetooth.le.downexample.bean.Data;
+import com.amobletool.bluetooth.le.downexample.utils.DataManageUtils;
+
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,6 +73,7 @@ public class BluetoothLeService extends Service {
     public final static String ACTION_GATT_SERVICES_DISCOVERED = "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
     public final static String ACTION_DATA_AVAILABLE = "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA = "com.example.bluetooth.le.EXTRA_DATA";
+    public final static String ACTION_NOTIFICATION_DATA = "com.example.bluetooth.le.ACTION_NOTIFICATION_DATA";
 
     public final static UUID UUID_HEART_RATE_MEASUREMENT = UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
 
@@ -82,14 +92,13 @@ public class BluetoothLeService extends Service {
                 // Attempts to discover services after successful connection.
                 Log.i(TAG, "Attempting to start service discovery:" +
                         mBluetoothGatt.discoverServices());
-                EventBus.getDefault().post(new MsgEvent("","ACTION_GATT_CONNECTED"));
-
+                EventBus.getDefault().post(new MsgEvent("", "ACTION_GATT_CONNECTED"));
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 intentAction = ACTION_GATT_DISCONNECTED;
                 mConnectionState = STATE_DISCONNECTED;
                 Log.i(TAG, "Disconnected from GATT server.");
                 broadcastUpdate(intentAction);
-                EventBus.getDefault().post(new MsgEvent("","ACTION_GATT_DISCONNECTED"));
+                EventBus.getDefault().post(new MsgEvent("", "ACTION_GATT_DISCONNECTED"));
             }
         }
 
@@ -110,8 +119,8 @@ public class BluetoothLeService extends Service {
                                          int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-            }else {
-                EventBus.getDefault().post(new MsgEvent("onCharacteristicRead",status+""));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("onCharacteristicRead", status + ""));
             }
         }
 
@@ -120,7 +129,7 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-            EventBus.getDefault().post(new MsgEvent("","onCharacteristicChanged"));
+//            EventBus.getDefault().post(new MsgEvent("Notification", "setCharacteristicNotification"));
         }
 
         //写入回调
@@ -129,14 +138,14 @@ public class BluetoothLeService extends Service {
             super.onCharacteristicWrite(gatt, characteristic, status);
             Handler handler = new Handler(Looper.getMainLooper());
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(BluetoothLeService.this, "写入成功", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(BluetoothLeService.this, "写入成功", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
-                readCharacteristic(characteristic);
+                setCharacteristicNotification(characteristic, true);
             } else if (status == BluetoothGatt.GATT_FAILURE) {
                 handler.post(new Runnable() {
                     @Override
@@ -154,6 +163,7 @@ public class BluetoothLeService extends Service {
             }
         }
     };
+    private List<byte[]> mByteList = new ArrayList<>();
 
     public void wirteCharacteristic(BluetoothGattCharacteristic characteristic) {
 
@@ -190,6 +200,69 @@ public class BluetoothLeService extends Service {
             final int heartRate = characteristic.getIntValue(format, 1);
             Log.d(TAG, String.format("Received heart rate: %d", heartRate));
             intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
+            sendBroadcast(intent);
+        } else if ("0000fff6-0000-1000-8000-00805f9b34fb".equals(characteristic.getUuid().toString())) {
+            final byte[] data = characteristic.getValue();
+            if (data[3] == (byte) 0xB1 && data[0] == (byte) 0xAA && data[1] == (byte) 0x0A) {
+                mByteList.clear();
+            }
+            mByteList.add(data);
+            if (mByteList.size() == 7) {
+                final List<byte[]> mByteNewList = new ArrayList<>();
+                mByteNewList.addAll(mByteList);
+                mByteList.clear();
+                byte[] bytes0 = mByteNewList.get(0);
+                for (int i = 0; i < mByteNewList.size(); i++) {
+                    String bytesToHexString = Utils.bytesToHexString(mByteNewList.get(i));
+                    Log.d("PK20", "broadcastUpdate: " + bytesToHexString);
+                }
+                int jiaoYan6 = DataManageUtils.jiaoYan6(mByteNewList.get(0), mByteNewList.get(6));
+                if (jiaoYan6 != 0) {
+//                    characteristic.setValue("AA01010000000000000000000000000000000000");
+//                    wirteCharacteristic(characteristic);
+                    EventBus.getDefault().post(new MsgEvent("Save6Data", "信道6数据有误"));
+                    return;
+                }
+                StringBuffer stringBuffer = new StringBuffer();
+                if (bytes0[3] != (byte) 0xB1) {
+                    stringBuffer.append("B1");
+                }
+                if (mByteNewList.get(1)[0] != (byte) 0xB2) {
+                    stringBuffer.append("B2");
+                }
+                if (mByteNewList.get(2)[0] != (byte) 0xB3) {
+                    stringBuffer.append("B3");
+                }
+                if (mByteNewList.get(3)[0] != (byte) 0xB4) {
+                    stringBuffer.append("B4");
+                }
+                if (mByteNewList.get(4)[0] != (byte) 0xB5) {
+                    stringBuffer.append("B5");
+                }
+                if (mByteNewList.get(5)[0] != (byte) 0xB6) {
+                    stringBuffer.append("B6");
+                }
+                if (mByteNewList.get(6)[0] != (byte) 0xB7) {
+                    stringBuffer.append("B7");
+                }
+                if (TextUtils.isEmpty(stringBuffer.toString())) {
+                    mThread m = new mThread(mByteNewList, characteristic);
+                    m.start();
+                } else {
+                    String toString = stringBuffer.toString();
+                    int length = toString().length() / 2 + 1;
+                    StringBuffer zero = new StringBuffer();
+                    for (int i = 0; i < 15 - length + 1; i++) {
+                        zero.append("00");
+                    }
+                    String jiaoYan = DataManageUtils.getJiaoYan(toString.substring(0, 2)
+                            , toString.substring(toString.length() - 2, toString.length()));
+                    zero.append(jiaoYan);
+//                    characteristic.setValue("AA020"+length+toString+zero+"00");
+//                    wirteCharacteristic(characteristic);
+                    EventBus.getDefault().post(new MsgEvent("Save6Data", "信道6数据部分重发"));
+                }
+            }
         } else {
             // For all other profiles, writes the data formatted in HEX.
             // 对于所有其他配置文件，用十六进制格式编写数据。
@@ -198,14 +271,60 @@ public class BluetoothLeService extends Service {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
                 for (byte byteChar : data)
                     stringBuilder.append(String.format("%02X ", byteChar));
-                intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
+                intent.putExtra(EXTRA_DATA, stringBuilder.toString());
+                sendBroadcast(intent);
             }
         }
-        sendBroadcast(intent);
+    }
+
+
+    class mThread extends Thread {
+        List<byte[]> mByteNewList;
+        BluetoothGattCharacteristic characteristic;
+
+        public mThread(List<byte[]> mByteNewList, BluetoothGattCharacteristic characteristic) {
+            this.mByteNewList = mByteNewList;
+            this.characteristic = characteristic;
+        }
+
+        @Override
+        public void run() {
+            Data mData = new Data();
+            String branchCode = DataManageUtils.getBranchCode(mByteNewList.get(0));
+            mData.setWangDian(branchCode);
+            String centerCode = DataManageUtils.getCenterCode(mByteNewList.get(0), mByteNewList.get(1));
+            mData.setCenter(centerCode);
+            String muDiCode = DataManageUtils.getMuDiCode(mByteNewList.get(1));
+            mData.setMuDi(muDiCode);
+            String use = DataManageUtils.getUse(mByteNewList.get(1));
+            mData.setLiuCheng(use);
+            String l = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.L);
+            mData.setL(l);
+            String w = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.W);
+            mData.setW(w);
+            String h = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.H);
+            mData.setH(h);
+            String g = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.G);
+            mData.setG(g);
+            String v = DataManageUtils.getV(mByteNewList.get(2));
+            mData.setV(v);
+            String time = DataManageUtils.getTime(mByteNewList.get(2));
+            mData.setTime(time);
+            String expressCode = DataManageUtils.getExpressCode(mByteNewList.get(3), mByteNewList.get(4));
+            mData.setBarCode(expressCode);
+            String mainCode = DataManageUtils.getMainCode(mByteNewList.get(4), mByteNewList.get(5));
+            mData.setZhu(mainCode);
+            String sonCode = DataManageUtils.getSonCode(mByteNewList.get(5), mByteNewList.get(6));
+            mData.setZi(sonCode);
+            String flag = DataManageUtils.getFlag(mByteNewList.get(6));
+            mData.setBiaoJi(flag);
+            MyApp.getDaoInstant().getDataDao().insertOrReplace(mData);
+            EventBus.getDefault().post(new MsgEvent("Save6DataSuccess", "一条数据存储成功"));
+        }
     }
 
     public class LocalBinder extends Binder {
-        BluetoothLeService getService() {
+        public BluetoothLeService getService() {
             return BluetoothLeService.this;
         }
     }
@@ -347,11 +466,21 @@ public class BluetoothLeService extends Service {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
-        mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
-        List<BluetoothGattDescriptor> descriptors = characteristic.getDescriptors();
-        for (BluetoothGattDescriptor dp : descriptors) {
-            dp.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            mBluetoothGatt.writeDescriptor(dp);
+//        mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+//        List<BluetoothGattDescriptor> descriptors = characteristic.getDescriptors();
+//        for (BluetoothGattDescriptor dp : descriptors) {
+//            dp.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+//            mBluetoothGatt.writeDescriptor(dp);
+//        }
+        boolean isEnableNotification = mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+        if (isEnableNotification) {
+            List<BluetoothGattDescriptor> descriptorList = characteristic.getDescriptors();
+            if (descriptorList != null && descriptorList.size() > 0) {
+                for (BluetoothGattDescriptor descriptor : descriptorList) {
+                    descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                    mBluetoothGatt.writeDescriptor(descriptor);
+                }
+            }
         }
         // This is specific to Heart Rate Measurement.这是特定于心率测量的。
 //        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid())) {

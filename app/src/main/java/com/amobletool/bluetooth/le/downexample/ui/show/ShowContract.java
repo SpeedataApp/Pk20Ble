@@ -1,4 +1,4 @@
-package com.amobletool.bluetooth.le.downexample.ui.main;
+package com.amobletool.bluetooth.le.downexample.ui.show;
 
 import android.content.Context;
 
@@ -10,7 +10,7 @@ import com.amobletool.bluetooth.le.downexample.mvp.BaseView;
  *  邮箱 784787081@qq.com
  */
 
-public class MainContract {
+public class ShowContract {
     interface View extends BaseView {
         
     }

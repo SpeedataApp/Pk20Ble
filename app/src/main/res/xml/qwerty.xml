@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Keyboard android:keyWidth="10.000002%p" android:keyHeight="50.0dip"
+<Keyboard android:keyWidth="9.000002%p" android:keyHeight="50.0dip"
 	android:horizontalGap="0.0px" android:verticalGap="0.0px"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<Row>
-		<Key android:codes="01" android:keyLabel="上" android:keyOutputText="上"
-			android:keyEdgeFlags="left"/>
+		<Key android:codes="01" android:keyLabel="上" android:keyOutputText="上"/>
 		<Key android:codes="02" android:keyLabel="级" android:keyOutputText="级" />
 		<Key android:codes="03" android:keyLabel="地" android:keyOutputText="地"/>
 		<Key android:codes="04" android:keyLabel="网" android:keyOutputText="网"/>
@@ -13,12 +12,10 @@
 		<Key android:codes="07" android:keyLabel="新" android:keyOutputText="新"/>
 		<Key android:codes="08" android:keyLabel="目" android:keyOutputText="目"/>
 		<Key android:codes="09" android:keyLabel="的" android:keyOutputText="的" />
-		<Key android:codes="0A" android:keyLabel="实" android:keyOutputText="实"
-			android:keyEdgeFlags="right"/>
+		<Key android:codes="0A" android:keyLabel="实" android:keyOutputText="实"/>
+		<Key android:codes="0B" android:keyLabel="际" android:keyOutputText="际"/>
 	</Row>
 	<Row>
-		<Key android:codes="0B" android:keyLabel="际" android:keyOutputText="际"
-			android:keyEdgeFlags="left"/>
 		<Key android:codes="0C" android:keyLabel="重" android:keyOutputText="重"/>
 		<Key android:codes="0D" android:keyLabel="量" android:keyOutputText="量" />
 		<Key android:codes="0E" android:keyLabel="低" android:keyOutputText="低"/>
@@ -27,13 +24,12 @@
 		<Key android:codes="11" android:keyLabel="测" android:keyOutputText="测"/>
 		<Key android:codes="12" android:keyLabel="快" android:keyOutputText="快" />
 		<Key android:codes="13" android:keyLabel="件" android:keyOutputText="件"/>
-		<Key android:codes="14" android:keyLabel="并" android:keyOutputText="并"
-			android:keyEdgeFlags="right"/>
+		<Key android:codes="14" android:keyLabel="并" android:keyOutputText="并"/>
+		<Key android:codes="15" android:keyLabel="发" android:keyOutputText="发"/>
+		<Key android:codes="16" android:keyLabel="中" android:keyOutputText="中"/>
 	</Row>
 	<Row>
-		<Key android:codes="15" android:keyLabel="发" android:keyOutputText="发"
-			android:keyEdgeFlags="left"/>
-		<Key android:codes="16" android:keyLabel="中" android:keyOutputText="中"/>
+
 		<Key android:codes="17" android:keyLabel="心" android:keyOutputText="心" />
 		<Key android:codes="18" android:keyLabel="连" android:keyOutputText="连"/>
 		<Key android:codes="19" android:keyLabel="接" android:keyOutputText="接"/>
@@ -41,58 +37,62 @@
 		<Key android:codes="1B" android:keyLabel="收" android:keyOutputText="收" />
 		<Key android:codes="1C" android:keyLabel="和" android:keyOutputText="和"/>
 		<Key android:codes="1D" android:keyLabel="成" android:keyOutputText="成"/>
-		<Key android:codes="1E" android:keyLabel="功" android:keyOutputText="功"
-			android:keyEdgeFlags="right"/>
-	</Row>
-	<Row>
-		<Key android:codes="1F" android:keyLabel="失" android:keyOutputText="失"
-			android:keyEdgeFlags="left"/>
+		<Key android:codes="1E" android:keyLabel="功" android:keyOutputText="功"/>
+		<Key android:codes="1F" android:keyLabel="失" android:keyOutputText="失"/>
 		<Key android:codes="20" android:keyLabel="败" android:keyOutputText="败"/>
 		<Key android:codes="21" android:keyLabel="稍" android:keyOutputText="稍"/>
+	</Row>
+	<Row>
+
 		<Key android:codes="22" android:keyLabel="等" android:keyOutputText="等" />
 		<Key android:codes="23" android:keyLabel="传" android:keyOutputText="传"/>
 		<Key android:codes="24" android:keyLabel="蓝" android:keyOutputText="蓝" />
 		<Key android:codes="25" android:keyLabel="牙" android:keyOutputText="牙" />
 		<Key android:codes="26" android:keyLabel="秤" android:keyOutputText="秤" />
 		<Key android:codes="27" android:keyLabel="条" android:keyOutputText="条"/>
-		<Key android:codes="28" android:keyLabel="码" android:keyOutputText="码"
-			android:keyEdgeFlags="right"/>
-	</Row>
-	<Row>
-		<Key android:codes="29" android:keyLabel="清" android:keyOutputText="清"
-			android:keyEdgeFlags="left"/>
+		<Key android:codes="28" android:keyLabel="码" android:keyOutputText="码"/>
+		<Key android:codes="29" android:keyLabel="清" android:keyOutputText="清"/>
 		<Key android:codes="2A" android:keyLabel="除" android:keyOutputText="除"/>
 		<Key android:codes="2B" android:keyLabel="保" android:keyOutputText="保" />
 		<Key android:codes="2C" android:keyLabel="存" android:keyOutputText="存" />
+	</Row>
+	<Row>
+
 		<Key android:codes="2D" android:keyLabel="充" android:keyOutputText="充" />
 		<Key android:codes="2E" android:keyLabel="电" android:keyOutputText="电"/>
 		<Key android:codes="2F" android:keyLabel="长" android:keyOutputText="长" />
 		<Key android:codes="30" android:keyLabel="宽" android:keyOutputText="宽"/>
 		<Key android:codes="31" android:keyLabel="高" android:keyOutputText="高"/>
-		<Key android:codes="32" android:keyLabel="请" android:keyOutputText="请"
-			android:keyEdgeFlags="right"/>
-	</Row>
-	<Row>
-		<Key android:codes="33" android:keyLabel="主" android:keyOutputText="主"
-			android:keyEdgeFlags="left"/>
+		<Key android:codes="32" android:keyLabel="请" android:keyOutputText="请"/>
+		<Key android:codes="33" android:keyLabel="主" android:keyOutputText="主"/>
 		<Key android:codes="34" android:keyLabel="子" android:keyOutputText="子"/>
 		<Key android:codes="35" android:keyLabel="单" android:keyOutputText="单"/>
 		<Key android:codes="36" android:keyLabel="号" android:keyOutputText="号" />
 		<Key android:codes="37" android:keyLabel="从" android:keyOutputText="从"/>
+	</Row>
+	<Row>
+
 		<Key android:codes="38" android:keyLabel="称" android:keyOutputText="称"/>
 		<Key android:codes="39" android:keyLabel="扫" android:keyOutputText="扫"/>
 		<Key android:codes="3A" android:keyLabel="描" android:keyOutputText="描"/>
 		<Key android:codes="3B" android:keyLabel="到" android:keyOutputText="到"/>
-		<Key android:codes="3C" android:keyLabel="已" android:keyOutputText="已"
-			android:keyEdgeFlags="right"/>
+		<Key android:codes="3C" android:keyLabel="已" android:keyOutputText="已"/>
+		<Key android:codes="3D" android:keyLabel="提" android:keyOutputText="提"/>
+		<Key android:codes="3E" android:keyLabel="取" android:keyOutputText="取"/>
+		<Key android:codes="3F" android:keyLabel="未" android:keyOutputText="未"/>
+		<Key android:codes="40" android:keyLabel="全" android:keyOutputText="全"/>
+		<Key android:codes="41" android:keyLabel="部" android:keyOutputText="部"/>
+		<Key android:codes="42" android:keyLabel="数" android:keyOutputText="数"/>
+
 	</Row>
     <Row android:rowEdgeFlags="bottom">
-		<Key android:keyWidth="40.000004%p" android:codes="-5"
+		<Key android:keyWidth="36.500004%p" android:codes="-5"
 			android:isRepeatable="true" android:keyEdgeFlags="left"
 			android:keyIcon="@drawable/sym_keyboard_delete" android:keyOutputText="DEL"/>
-        <Key android:codes="3D" android:keyLabel="提" android:keyOutputText="提"/>
-        <Key android:codes="3E" android:keyLabel="取" android:keyOutputText="取"/>
-		<Key android:keyWidth="40.000004%p" android:codes="-3"
+		<Key android:codes="43" android:keyLabel="据" android:keyOutputText="据"/>
+		<Key android:codes="44" android:keyLabel="时" android:keyOutputText="时"/>
+		<Key android:codes="45" android:keyLabel="间" android:keyOutputText="间"/>
+		<Key android:keyWidth="36.500004%p" android:codes="-3"
 			android:keyEdgeFlags="right" android:keyLabel="完成" android:keyOutputText="完成" />
     </Row>
 </Keyboard>

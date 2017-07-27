@@ -6,35 +6,38 @@
 
     <LinearLayout
         android:id="@+id/ll"
-        android:visibility="gone"
-        android:layout_weight="0"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
         <LinearLayout
-            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:layout_weight="5"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:padding="10dp">
+
             <TextView
                 android:id="@+id/device_name"
-                android:text="Name:PK20"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Name:PK20" />
+
             <TextView
                 android:id="@+id/device_address"
-                android:text="Address:PK20"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Address:PK20" />
         </LinearLayout>
+
         <LinearLayout
-            android:gravity="center"
-            android:layout_weight="1"
-            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ToggleButton
                 android:id="@+id/btn_serviceStatus"
@@ -52,37 +55,59 @@
         android:id="@+id/frame_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9"
-        android:padding="10dp">
+        android:layout_weight="9">
 
     </FrameLayout>
 
+
     <LinearLayout
-        android:padding="5dp"
-        android:orientation="horizontal"
+        android:background="@color/gray"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp">
+        <TextView
+            android:id="@+id/show"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:drawableTop="@drawable/show"
+            android:gravity="center"
+            android:text="数据展示"
+            android:textColor="@color/black" />
 
         <TextView
+            android:id="@+id/start"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:clickable="true"
-            android:textColor="@color/black"
+            android:drawableTop="@drawable/start_black"
             android:gravity="center"
             android:text="流程下达"
-            android:id="@+id/start"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/start"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:textColor="@color/black" />
 
         <TextView
+            android:id="@+id/add"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:clickable="true"
-            android:textColor="@color/black"
+            android:drawableTop="@drawable/add_black"
             android:gravity="center"
             android:text="流程添加"
-            android:id="@+id/add"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/add_black"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/set"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:drawableTop="@drawable/set_black"
+            android:gravity="center"
+            android:text="设置"
+            android:textColor="@color/black" />
     </LinearLayout>
 </LinearLayout>

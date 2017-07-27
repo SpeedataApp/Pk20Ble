@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_setTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="设置时间" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设置体积重比例系数（小于60000）" />
+
+            <EditText
+                android:id="@+id/et_bili"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btn_bili"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="设置体积重比例系数" />
+
+
+            <Button
+                android:id="@+id/btn_ziku"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="设置字库" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

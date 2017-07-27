@@ -14,13 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.amobletool.bluetooth.le"
-    android:versionCode="1"
-    android:versionName="1.0">
+    package="com.amobletool.bluetooth.le">
 
-    <uses-sdk
-        android:minSdkVersion="18"
-        android:targetSdkVersion="18" />
     <!-- Declare this required feature if you want to make the app available to BLE-capable
     devices only.  If you want to make your app available to devices that don't support BLE,
     you should omit this in the manifest.  Instead, determine BLE capability by using
@@ -36,7 +31,7 @@ limitations under the License.
 
     <application
         android:name=".downexample.MyApp"
-        android:icon="@drawable/launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light">
         <activity
@@ -47,24 +42,13 @@ limitations under the License.
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
-        <activity android:name="com.amobletool.bluetooth.le.AmoComActivity" />
 
 
         <activity android:name=".downexample.DeviceControlActivity"/>
-        <activity android:name=".DeviceScanActivity"/>
-        <service android:name=".downexample.BluetoothLeService" android:enabled="true"/>
-
-        <activity android:name=".downexample.ui.main.MainActivity">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity android:name=".downexample.ui.courier.CourierActivity"/>
-        <activity android:name=".downexample.ui.branch.BranchActivity"/>
-        <activity android:name=".downexample.ui.allocate.AllocateActivity"/>
-        <activity android:name=".downexample.ui.air.AirActivity"/>
-        <activity android:name=".downexample.ui.menu.MenuActivity">
+        <service android:name=".downexample.service.BluetoothLeService" android:enabled="true"/>
+        <service android:name=".downexample.service.PK20DataService"/>
+        <activity android:name=".downexample.ui.menu.MenuActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -72,6 +56,14 @@ limitations under the License.
         </activity>
 
         <activity android:name=".downexample.ui.add.AddActivity"/>
+
+        <activity android:name=".DeviceScanActivity">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity android:name=".AmoComActivity"/>
     </application>
 </manifest>
 

@@ -6,6 +6,7 @@ import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.amobletool.bluetooth.le.R;
 import com.amobletool.bluetooth.le.downexample.mvp.MVPBaseActivity;
@@ -95,6 +97,10 @@ public class AddActivity extends MVPBaseActivity<AddContract.View, AddPresenter>
                 boolean checked3 = cb3.isChecked();
                 String guDingBiaoShi = mPresenter.getGuDingBiaoShi(checked1, checked2, checked3);
                 String renWuCode = mPresenter.getRenWuCode(spinnerList);
+                if (TextUtils.isEmpty(renWuCode)){
+                    Toast.makeText(this, "请选择任务！", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String[] renWuSplit = renWuCode.split("-");
                 int qingJingCode = SharedXmlUtil.getInstance(this).read("QingJingCode", 0);
                 qingJingCode++;
@@ -103,10 +109,18 @@ public class AddActivity extends MVPBaseActivity<AddContract.View, AddPresenter>
                     qingJingStr = "0" + qingJingStr;
                 }
                 SharedXmlUtil.getInstance(this).write("QingJingCode", qingJingCode);
-                String result = "FF0A" + renWuSplit[1] + qingJingStr + guDingBiaoShi
-                        + word2Id + renWuSplit[0] + renWuSplit[2] + "00";
-                commit.setText(result);
-                Log.d("pk20", "onClick: " + word2Id + "-" + renWuCode + "-" + guDingBiaoShi);
+                String result = "FF0A" + renWuSplit[2] + qingJingStr + guDingBiaoShi
+                        + word2Id + renWuSplit[0] + renWuSplit[1] + renWuSplit[3] + "00";
+                int saveLiuCheng = mPresenter.saveLiuCheng(qingJingStr, result, name.getText().toString()
+                        , renWuSplit[0], renWuSplit[4]);
+                if (saveLiuCheng == 0) {
+                    Toast.makeText(this, "添加成功！", Toast.LENGTH_SHORT).show();
+                    this.finish();
+                }else {
+                    Toast.makeText(this, "添加失败！", Toast.LENGTH_SHORT).show();
+                }
+
+                Log.d("pk20", "commit onClick: " + word2Id + "-" + renWuCode + "-" + guDingBiaoShi);
                 break;
         }
     }

@@ -42,6 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amobletool.bluetooth.le.R;
+import com.amobletool.bluetooth.le.downexample.service.BluetoothLeService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.ThreadMode;
@@ -51,9 +52,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.amobletool.bluetooth.le.downexample.BluetoothLeService.ACTION_DATA_AVAILABLE;
-import static com.amobletool.bluetooth.le.downexample.BluetoothLeService.ACTION_GATT_CONNECTED;
-import static com.amobletool.bluetooth.le.downexample.BluetoothLeService.ACTION_GATT_DISCONNECTED;
+import static com.amobletool.bluetooth.le.downexample.service.BluetoothLeService.ACTION_DATA_AVAILABLE;
+import static com.amobletool.bluetooth.le.downexample.service.BluetoothLeService.ACTION_GATT_CONNECTED;
+import static com.amobletool.bluetooth.le.downexample.service.BluetoothLeService.ACTION_GATT_DISCONNECTED;
 
 
 /**

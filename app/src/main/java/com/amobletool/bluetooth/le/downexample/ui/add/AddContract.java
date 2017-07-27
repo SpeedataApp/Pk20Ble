@@ -21,5 +21,6 @@ public class AddContract {
         String word2Id(String str);
         String getGuDingBiaoShi(boolean c1,boolean c2,boolean c3);
         String getRenWuCode(List<Spinner> spinnerList);
+        int saveLiuCheng(String id,String code,String name,String renWuCode,String renWuName);
     }
 }

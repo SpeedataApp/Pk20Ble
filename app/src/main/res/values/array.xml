@@ -4,29 +4,29 @@
         <item></item>
         <item>01:PDA连接蓝牙</item>
         <item>02:测量体积重</item>
-        <item>03:设置上级网点</item>
-        <item>04:设置目的地条码</item>
+        <!--<item>03:设置上级网点</item>-->
+        <!--<item>04:设置目的地条码</item>-->
         <item>05:扫描快件条码</item>
         <item>06:扫描主单号</item>
         <item>07:扫描子单号</item>
-        <item>08:扫描中心条码</item>
-        <item>09:未发送数据发送</item>
-        <item>0A:全部数据发送</item>
-        <item>0B:单条数据发送</item>
+        <!--<item>08:扫描中心条码</item>-->
+        <!--<item>09:未发送数据发送</item>-->
+        <!--<item>0A:全部数据发送</item>-->
+        <!--<item>0B:单条数据发送</item>-->
         <item>0C:清除存储空间</item>
         <item>0D:显示时间</item>
-        <item>0E:蓝牙连接电子秤1</item>
-        <item>0F:蓝牙连接电子秤2</item>
-        <item>10:测量实际重量1</item>
-        <item>11:测量实际重量2</item>
+        <!--<item>0E:蓝牙连接电子秤1</item>-->
+        <!--<item>0F:蓝牙连接电子秤2</item>-->
+        <!--<item>10:测量实际重量1</item>-->
+        <!--<item>11:测量实际重量2</item>-->
         <item>12:获取时间</item>
         <item>13:显示网点代码</item>
         <item>14:显示中心代码</item>
         <item>15:记录保存</item>
-        <item>16:条码扫描+测量体积重</item>
-        <item>17:判断蓝牙秤情况</item>
-        <item>18:体积重+实重</item>
-        <item>37:流程结束</item>
+        <!--<item>16:条码扫描+测量体积重</item>-->
+        <!--<item>17:判断蓝牙秤情况</item>-->
+        <!--<item>18:体积重+实重</item>-->
+        <!--<item>37:流程结束</item>-->
 
     </string-array>
 

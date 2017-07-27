@@ -20,6 +20,7 @@ import com.amobletool.bluetooth.le.downexample.bean.DaoMaster;
 import com.amobletool.bluetooth.le.downexample.bean.DaoSession;
 import com.amobletool.bluetooth.le.downexample.bean.Word;
 import com.amobletool.bluetooth.le.downexample.bean.WordDao;
+import com.amobletool.bluetooth.le.downexample.service.BluetoothLeService;
 import com.amobletool.bluetooth.le.downexample.utils.SharedXmlUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,9 +28,9 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.amobletool.bluetooth.le.downexample.BluetoothLeService.ACTION_DATA_AVAILABLE;
-import static com.amobletool.bluetooth.le.downexample.BluetoothLeService.ACTION_GATT_CONNECTED;
-import static com.amobletool.bluetooth.le.downexample.BluetoothLeService.ACTION_GATT_DISCONNECTED;
+import static com.amobletool.bluetooth.le.downexample.service.BluetoothLeService.ACTION_DATA_AVAILABLE;
+import static com.amobletool.bluetooth.le.downexample.service.BluetoothLeService.ACTION_GATT_CONNECTED;
+import static com.amobletool.bluetooth.le.downexample.service.BluetoothLeService.ACTION_GATT_DISCONNECTED;
 
 /**
  * Created by 张明_ on 2017/7/10.
@@ -43,8 +44,8 @@ public class MyApp extends Application {
     public static String address = "";
     public static String name = "";
     private BluetoothLeService mBluetoothLeService = null;
-    private BluetoothGattCharacteristic mNotifyCharacteristic3 = null;
-    private BluetoothGattCharacteristic mNotifyCharacteristic6 = null;
+    public static BluetoothGattCharacteristic mNotifyCharacteristic3 = null;
+    public static BluetoothGattCharacteristic mNotifyCharacteristic6 = null;
     //greendao
     private static DaoSession daoSession;
 
@@ -102,6 +103,15 @@ public class MyApp extends Application {
         if (mNotifyCharacteristic6 != null) {
             mBluetoothLeService.readCharacteristic(mNotifyCharacteristic6);
         }
+    }
+    public void readCharacteristic3() {
+        if (mNotifyCharacteristic3 != null) {
+            mBluetoothLeService.readCharacteristic(mNotifyCharacteristic3);
+        }
+    }
+    public void setCharacteristicNotification6(BluetoothGattCharacteristic characteristic,
+                                               boolean enabled){
+        mBluetoothLeService.setCharacteristicNotification(characteristic,enabled);
     }
 
     @Override
@@ -169,16 +179,18 @@ public class MyApp extends Application {
             //在成功启动初始化时自动连接到设备。
             boolean connect = mBluetoothLeService.connect(address);
             if (connect) {
-                Toast.makeText(MyApp.this, "ServiceConnected success", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyApp.this, "连接成功", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(MyApp.this, "ServiceConnected failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyApp.this, "连接失败", Toast.LENGTH_SHORT).show();
             }
+            EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", true));
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mBluetoothLeService = null;
-            Toast.makeText(MyApp.this, "ServiceDisconnected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MyApp.this, "连接失败", Toast.LENGTH_SHORT).show();
+            EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", false));
         }
     };
 
@@ -197,9 +209,6 @@ public class MyApp extends Application {
                 Toast.makeText(MyApp.this, "connection success", Toast.LENGTH_SHORT).show();
                 EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", true));
             } else if (ACTION_GATT_DISCONNECTED.equals(action)) {
-                unregisterReceiver(mGattUpdateReceiver);
-                unbindService(mServiceConnection);
-                Toast.makeText(MyApp.this, "disconnection", Toast.LENGTH_SHORT).show();
                 EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", false));
                 mNotifyCharacteristic3 = null;
                 mNotifyCharacteristic6 = null;
@@ -207,6 +216,10 @@ public class MyApp extends Application {
                 mBluetoothLeService = null;
                 address = null;
                 name = null;
+                unregisterReceiver(mGattUpdateReceiver);
+                unbindService(mServiceConnection);
+                Toast.makeText(MyApp.this, "disconnection", Toast.LENGTH_SHORT).show();
+
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 //显示用户界面上所有受支持的服务和特性。
@@ -214,6 +227,7 @@ public class MyApp extends Application {
             } else if (ACTION_DATA_AVAILABLE.equals(action)) {
                 String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                 sendBluetoothLeData(data);
+//                EventBus.getDefault().post(new MsgEvent("DataAvailable",data));
             }
         }
     };
@@ -233,8 +247,10 @@ public class MyApp extends Application {
                 uuid = gattCharacteristic.getUuid().toString();
                 if (uuid.equals("0000fff3-0000-1000-8000-00805f9b34fb")) {
                     mNotifyCharacteristic3 = gattCharacteristic;
+//                    setCharacteristicNotification6(mNotifyCharacteristic3,true);
                 } else if (uuid.equals("0000fff6-0000-1000-8000-00805f9b34fb")) {
                     mNotifyCharacteristic6 = gattCharacteristic;
+                    setCharacteristicNotification6(mNotifyCharacteristic6,true);
                 }
 
             }
@@ -271,12 +287,13 @@ public class MyApp extends Application {
         final String[] idStr = {"01","02","03","04","05","06","07","08","09","0A","0B","0C","0D","0E","0F",
                 "10","11","12","13","14","15","16","17","18","19","1A","1B","1C","1D","1E","1F",
                 "20","21","22","23","24","25","26","27","28","29","2A","2B","2C","2D","2E","2F",
-                "30","31","32","33","34","35","36","37","38","39","3A","3B","3C","3D","3E"};
+                "30","31","32","33","34","35","36","37","38","39","3A","3B","3C","3D","3E","3F",
+                "40","41","42","43","44","45"};
         final String[] wordStr = {"上", "级", "地", "网", "点", "代", "新", "目", "的", "实", "际", "重", "量",
                 "低", "体", "积", "测", "快", "件", "并", "发", "中", "心", "连", "接", "揽", "收", "和",
                 "成", "功", "失", "败", "稍", "等", "传", "蓝", "牙", "秤", "条", "码", "清", "除", "保",
                 "存", "充", "电", "长", "宽", "高", "请", "主", "子", "单", "号", "从", "称", "扫", "描",
-                "到", "已", "提", "取"};
+                "到", "已", "提", "取","未","全","部","数","据","时","间"};
         new Thread(new Runnable() {
             @Override
             public void run() {
