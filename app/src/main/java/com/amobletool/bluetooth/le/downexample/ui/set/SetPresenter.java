@@ -47,7 +47,7 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
             MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
                 @Override
                 public void getData(String data) {
-                    seeResult(data, result);
+                    seeResult(data, "0C");
                 }
             });
         } else {
@@ -57,19 +57,12 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
     }
 
     //检验返回的数据
-    private int seeResult(String data, String result) {
-        int jiaoYanData = DataManageUtils.jiaoYanData(data, "FF", "0C");
-
-        String[] splitData = data.split(" ");
-        if (splitData[1].equals("01")) {
-            MyApp.getInstance().writeCharacteristic3(result);
-        }
-        if (splitData[3].equals("00")) {
-            EventBus.getDefault().post(new MsgEvent("Notification", "设置失败"));
-            return -1;
-        } else {
+    private void seeResult(String data, String result) {
+        int jiaoYanData = DataManageUtils.jiaoYanData(data, "FF", result);
+        if (jiaoYanData==0){
             EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
-            return 0;
+        }else {
+            EventBus.getDefault().post(new MsgEvent("Notification", "设置失败"));
         }
     }
 
@@ -118,7 +111,7 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                 MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
                     @Override
                     public void getData(String data) {
-                        seeResult(data, result);
+                        seeResult(data, "0D");
                     }
                 });
             } else {

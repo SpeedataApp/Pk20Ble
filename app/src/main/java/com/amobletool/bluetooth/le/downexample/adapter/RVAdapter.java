@@ -105,7 +105,7 @@ public class RVAdapter extends CommonRvAdapter<Data> {
         int v = 0;
         if (!itemV.equals("ffffffff")) {
             v = Integer.parseInt(itemV, 16);
-            setUi(helper, v / 100 + "公斤", R.id.tv_v, R.id.ll_v);
+            setUi(helper, v  + "", R.id.tv_v, R.id.ll_v);
         }else {
             setUi(helper, "", R.id.tv_v, R.id.ll_v);
         }
