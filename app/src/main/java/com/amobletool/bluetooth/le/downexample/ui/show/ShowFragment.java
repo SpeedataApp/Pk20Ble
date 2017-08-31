@@ -53,7 +53,6 @@ public class ShowFragment extends MVPBaseFragment<ShowContract.View, ShowPresent
         rv_content= (RecyclerView) view.findViewById(R.id.rv_content);
     }
 
-
     private RVAdapter mAdapter;
     private LinearLayoutManager layoutManager;
     private void initRV() {

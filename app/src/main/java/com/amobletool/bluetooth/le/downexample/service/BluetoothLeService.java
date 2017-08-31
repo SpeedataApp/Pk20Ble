@@ -138,13 +138,6 @@ public class BluetoothLeService extends Service {
             super.onCharacteristicWrite(gatt, characteristic, status);
             Handler handler = new Handler(Looper.getMainLooper());
             if (status == BluetoothGatt.GATT_SUCCESS) {
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Toast.makeText(BluetoothLeService.this, "写入成功", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-
                 setCharacteristicNotification(characteristic, true);
             } else if (status == BluetoothGatt.GATT_FAILURE) {
                 handler.post(new Runnable() {
@@ -218,12 +211,10 @@ public class BluetoothLeService extends Service {
                 }
                 int jiaoYan6 = DataManageUtils.jiaoYan6(mByteNewList.get(0), mByteNewList.get(6));
                 if (jiaoYan6 != 0) {
-//                    characteristic.setValue("AA01010000000000000000000000000000000000");
-//                    wirteCharacteristic(characteristic);
                     EventBus.getDefault().post(new MsgEvent("Save6Data", "信道6数据有误"));
                     return;
                 }
-                StringBuffer stringBuffer = new StringBuffer();
+                StringBuilder stringBuffer = new StringBuilder();
                 if (bytes0[3] != (byte) 0xB1) {
                     stringBuffer.append("B1");
                 }
@@ -251,15 +242,13 @@ public class BluetoothLeService extends Service {
                 } else {
                     String toString = stringBuffer.toString();
                     int length = toString().length() / 2 + 1;
-                    StringBuffer zero = new StringBuffer();
+                    StringBuilder zero = new StringBuilder();
                     for (int i = 0; i < 15 - length + 1; i++) {
                         zero.append("00");
                     }
                     String jiaoYan = DataManageUtils.getJiaoYan(toString.substring(0, 2)
                             , toString.substring(toString.length() - 2, toString.length()));
                     zero.append(jiaoYan);
-//                    characteristic.setValue("AA020"+length+toString+zero+"00");
-//                    wirteCharacteristic(characteristic);
                     EventBus.getDefault().post(new MsgEvent("Save6Data", "信道6数据部分重发"));
                 }
             }
@@ -319,7 +308,7 @@ public class BluetoothLeService extends Service {
             String flag = DataManageUtils.getFlag(mByteNewList.get(6));
             mData.setBiaoJi(flag);
             MyApp.getDaoInstant().getDataDao().insertOrReplace(mData);
-            EventBus.getDefault().post(new MsgEvent("Save6DataSuccess", "一条数据存储成功"));
+            EventBus.getDefault().post(new MsgEvent("Save6DataSuccess", "数据存储成功"));
         }
     }
 

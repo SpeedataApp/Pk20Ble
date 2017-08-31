@@ -6,6 +6,7 @@ import android.os.SystemClock;
 
 import com.amobletool.bluetooth.le.downexample.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.MyApp;
+import com.amobletool.bluetooth.le.downexample.bean.YouSuData;
 import com.amobletool.bluetooth.le.downexample.bean.ZiKuData;
 import com.amobletool.bluetooth.le.downexample.mvp.BasePresenterImpl;
 import com.amobletool.bluetooth.le.downexample.utils.DataManageUtils;
@@ -71,10 +72,10 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
     private volatile int i = 0;
     private volatile boolean isSend = false;
 
-    private int seeZikuResult(String data, String s1, String s2) {
-        int jiaoYanData = DataManageUtils.jiaoYanData(data, "FF", "0B");
+    private int seeZikuResult(String data, String s1, String s2,String zhiling) {
+        int jiaoYanData = DataManageUtils.jiaoYanData(data, "FF", zhiling);
         if (jiaoYanData == -1 || jiaoYanData == -2) {
-            sendZiKuData(s1, s2);
+            sendData(s1, s2);
             count++;
             return -1;
         } else if (jiaoYanData == -3) {
@@ -127,18 +128,14 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
 
     //设置字库
     @Override
-    public void setZiKu(final Activity activity) {
+    public void setZiKu(final Activity activity, final ProgressDialog progressDialog) {
         count = 0;
         i = 0;
-        final ProgressDialog progressDialog = new ProgressDialog(activity);
-        progressDialog.setMessage("设置字库中...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
         if (mNotifyCharacteristic3 != null) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    sendZiKuData(ZiKuData.getData1(0), ZiKuData.getData2(0));
+                    sendData(ZiKuData.getData1(0), ZiKuData.getData2(0));
                     MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
                         @Override
                         public void getData(final String data) {
@@ -159,7 +156,7 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                                         });
                                         return;
                                     }
-                                    int result = seeZikuResult(data, ZiKuData.getData1(i), ZiKuData.getData2(i));
+                                    int result = seeZikuResult(data, ZiKuData.getData1(i), ZiKuData.getData2(i),"0B");
                                     if (result == 0) {
                                         count = 0;
                                         i++;
@@ -173,7 +170,7 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                                             EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
                                             return;
                                         }
-                                        sendZiKuData(ZiKuData.getData1(i), ZiKuData.getData2(i));
+                                        sendData(ZiKuData.getData1(i), ZiKuData.getData2(i));
                                     }
                                 }
                             }).start();
@@ -185,10 +182,85 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
 
         } else {
             EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            progressDialog.cancel();
         }
     }
 
-    private void sendZiKuData(String s1, String s2) {
+    @Override
+    public void setClean() {
+        final String result = "FF0E010000000000000000000000000000000000";
+        if (mNotifyCharacteristic3 != null) {
+            MyApp.getInstance().writeCharacteristic3(result);
+            MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
+                @Override
+                public void getData(String data) {
+                    seeResult(data, "0E");
+                }
+            });
+        } else {
+            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+        }
+    }
+
+    @Override
+    public void setYousu(final Activity activity, final ProgressDialog progressDialog) {
+        count = 0;
+        i = 0;
+        if (mNotifyCharacteristic3 != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    sendData(YouSuData.getData1(0), YouSuData.getData2(0));
+                    MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
+                        @Override
+                        public void getData(final String data) {
+                            isSend = true;
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    SystemClock.sleep(50);
+                                    if (count > 5) {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressDialog.cancel();
+                                            }
+                                        });
+                                        EventBus.getDefault().post(new MsgEvent("Notification"
+                                                , "失败次数过多，请检查设备状态"));
+                                        return;
+                                    }
+                                    int result = seeZikuResult(data, YouSuData.getData1(i), YouSuData.getData2(i),"10");
+                                    if (result == 0) {
+                                        count = 0;
+                                        i++;
+                                        if (i == 4) {
+                                            activity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    progressDialog.cancel();
+                                                }
+                                            });
+                                            EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+                                            return;
+                                        }
+                                        sendData(YouSuData.getData1(i), YouSuData.getData2(i));
+                                    }
+                                }
+                            }).start();
+
+                        }
+                    });
+                }
+            }).start();
+
+        } else {
+            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            progressDialog.cancel();
+        }
+    }
+
+    private void sendData(String s1, String s2) {
         MyApp.getInstance().writeCharacteristic3(s1);
         SystemClock.sleep(300);
         MyApp.getInstance().writeCharacteristic3(s2);
@@ -210,7 +282,7 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
         @Override
         public void run() {
             if (mNotifyCharacteristic3 != null && !isSend) {
-                sendZiKuData(data1, data2);
+                sendData(data1, data2);
             }
         }
     }

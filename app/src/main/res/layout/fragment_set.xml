@@ -42,6 +42,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="设置字库" />
+            <Button
+                android:id="@+id/btn_clean"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="清除流程" />
+            <Button
+                android:id="@+id/btn_yousu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="设置优速快递为公司名" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

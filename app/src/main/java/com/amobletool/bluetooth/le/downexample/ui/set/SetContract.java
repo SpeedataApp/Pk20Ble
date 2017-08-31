@@ -1,6 +1,7 @@
 package com.amobletool.bluetooth.le.downexample.ui.set;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 
 import com.amobletool.bluetooth.le.downexample.mvp.BasePresenter;
 import com.amobletool.bluetooth.le.downexample.mvp.BaseView;
@@ -18,6 +19,8 @@ public class SetContract {
     interface  Presenter extends BasePresenter<View> {
         void setTime();
         void setBili(String s);
-        void setZiKu(Activity activity);
+        void setZiKu(Activity activity,ProgressDialog progressDialog);
+        void setClean();
+        void setYousu(Activity activity,ProgressDialog progressDialog);
     }
 }
