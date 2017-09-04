@@ -33,7 +33,7 @@ import static com.amobletool.bluetooth.le.downexample.MyApp.mNotifyCharacteristi
  */
 
 public class AssignFragment extends MVPBaseFragment<AssignContract.View, AssignPresenter> implements
-        AssignContract.View, AdapterView.OnItemClickListener, View.OnClickListener {
+        AssignContract.View, AdapterView.OnItemClickListener, View.OnClickListener,AdapterView.OnItemLongClickListener {
 
     private ListView rv_content;
     //    private Button btn_commit;
@@ -75,16 +75,11 @@ public class AssignFragment extends MVPBaseFragment<AssignContract.View, AssignP
                 helper.setText(R.id.tv_id, item.getId());
                 helper.setText(R.id.tv_name, item.getName());
                 helper.setText(R.id.tv_renwu, item.getRenWuName());
-//                String isCheck = item.getIsCheck();
-//                if (TextUtils.isEmpty(isCheck)) {
-//                    helper.setChecked(R.id.item_cb, false);
-//                } else {
-//                    helper.setChecked(R.id.item_cb, true);
-//                }
             }
         };
         rv_content.setAdapter(commonAdapter);
         rv_content.setOnItemClickListener(this);
+        rv_content.setOnItemLongClickListener(this);
     }
 
 
@@ -92,18 +87,6 @@ public class AssignFragment extends MVPBaseFragment<AssignContract.View, AssignP
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-//        CheckBox checkBox = (CheckBox) view.findViewById(R.id.item_cb);
-//        checkBox.setChecked(!checkBox.isChecked());
-//        String liuChengsId = liuChengs.get(position).getId();
-//        if (checkBox.isChecked()) {
-//            idList.add(liuChengsId);
-//            Log.d("PK20", "流程下达 " + liuChengsId);
-//            liuChengs.get(position).setIsCheck("1");
-//        } else {
-//            idList.remove(liuChengsId);
-//            Log.d("PK20", "流程下达 " + liuChengsId);
-//            liuChengs.get(position).setIsCheck("");
-//        }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("下达《" + liuChengs.get(position).getName() + "》流程");
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -172,4 +155,28 @@ public class AssignFragment extends MVPBaseFragment<AssignContract.View, AssignP
         liuChengs.clear();
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("删除《" + liuChengs.get(position).getName() + "》流程");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                LiuCheng unique = MyApp.getDaoInstant().getLiuChengDao().queryBuilder()
+                        .where(LiuChengDao.Properties.Id.eq(liuChengs.get(position).getId())).unique();
+                MyApp.getDaoInstant().getLiuChengDao().delete(unique);
+                openFragment(new AssignFragment());
+                closeFragment();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+        return true;
+    }
 }

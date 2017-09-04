@@ -2,7 +2,7 @@
 <resources>
     <string-array name="quest">
         <item></item>
-        <item>01:PDA连接蓝牙</item>
+        <!--<item>01:PDA连接蓝牙</item>-->
         <item>02:测量体积重</item>
         <!--<item>03:设置上级网点</item>-->
         <!--<item>04:设置目的地条码</item>-->
@@ -13,7 +13,7 @@
         <!--<item>09:未发送数据发送</item>-->
         <!--<item>0A:全部数据发送</item>-->
         <!--<item>0B:单条数据发送</item>-->
-        <item>0C:清除存储空间</item>
+        <!--<item>0C:清除存储空间</item>-->
         <item>0D:显示时间</item>
         <!--<item>0E:蓝牙连接电子秤1</item>-->
         <!--<item>0F:蓝牙连接电子秤2</item>-->
@@ -26,6 +26,7 @@
         <!--<item>16:条码扫描+测量体积重</item>-->
         <!--<item>17:判断蓝牙秤情况</item>-->
         <!--<item>18:体积重+实重</item>-->
+        <item>19:显示测量结果</item>
         <!--<item>37:流程结束</item>-->
 
     </string-array>
