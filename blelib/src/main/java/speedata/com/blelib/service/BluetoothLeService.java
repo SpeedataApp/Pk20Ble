@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2013 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.amobletool.bluetooth.le.downexample.service;
+package speedata.com.blelib.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -37,18 +21,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.amobletool.bluetooth.le.downexample.MsgEvent;
-import com.amobletool.bluetooth.le.downexample.MyApp;
-import com.amobletool.bluetooth.le.downexample.SampleGattAttributes;
-import com.amobletool.bluetooth.le.downexample.Utils;
-import com.amobletool.bluetooth.le.downexample.bean.Data;
-import com.amobletool.bluetooth.le.downexample.utils.DataManageUtils;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import speedata.com.blelib.bean.PK20Data;
+import speedata.com.blelib.bean.SampleGattAttributes;
+import speedata.com.blelib.utils.DataManageUtils;
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
@@ -73,7 +52,8 @@ public class BluetoothLeService extends Service {
     public final static String ACTION_GATT_SERVICES_DISCOVERED = "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
     public final static String ACTION_DATA_AVAILABLE = "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA = "com.example.bluetooth.le.EXTRA_DATA";
-    public final static String ACTION_NOTIFICATION_DATA = "com.example.bluetooth.le.ACTION_NOTIFICATION_DATA";
+    public final static String NOTIFICATION_DATA = "com.example.bluetooth.le.NOTIFICATION_DATA";
+    public final static String NOTIFICATION_DATA_ERR = "com.example.bluetooth.le.NOTIFICATION_DATA_ERR";
 
     public final static UUID UUID_HEART_RATE_MEASUREMENT = UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
 
@@ -87,18 +67,15 @@ public class BluetoothLeService extends Service {
                 intentAction = ACTION_GATT_CONNECTED;
                 mConnectionState = STATE_CONNECTED;
                 broadcastUpdate(intentAction);
-//                mBluetoothGatt.discoverServices();
                 Log.i(TAG, "Connected to GATT server.");
                 // Attempts to discover services after successful connection.
                 Log.i(TAG, "Attempting to start service discovery:" +
                         mBluetoothGatt.discoverServices());
-                EventBus.getDefault().post(new MsgEvent("", "ACTION_GATT_CONNECTED"));
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 intentAction = ACTION_GATT_DISCONNECTED;
                 mConnectionState = STATE_DISCONNECTED;
                 Log.i(TAG, "Disconnected from GATT server.");
                 broadcastUpdate(intentAction);
-                EventBus.getDefault().post(new MsgEvent("", "ACTION_GATT_DISCONNECTED"));
             }
         }
 
@@ -119,8 +96,6 @@ public class BluetoothLeService extends Service {
                                          int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-            } else {
-                EventBus.getDefault().post(new MsgEvent("onCharacteristicRead", status + ""));
             }
         }
 
@@ -129,7 +104,6 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-//            EventBus.getDefault().post(new MsgEvent("Notification", "setCharacteristicNotification"));
         }
 
         //写入回调
@@ -206,12 +180,13 @@ public class BluetoothLeService extends Service {
                 mByteList.clear();
                 byte[] bytes0 = mByteNewList.get(0);
                 for (int i = 0; i < mByteNewList.size(); i++) {
-                    String bytesToHexString = Utils.bytesToHexString(mByteNewList.get(i));
+                    String bytesToHexString = DataManageUtils.bytesToHexString(mByteNewList.get(i));
                     Log.d("PK20", "broadcastUpdate: " + bytesToHexString);
                 }
                 int jiaoYan6 = DataManageUtils.jiaoYan6(mByteNewList.get(0), mByteNewList.get(6));
                 if (jiaoYan6 != 0) {
-                    EventBus.getDefault().post(new MsgEvent("Save6Data", "信道6数据有误"));
+                    intent.putExtra(NOTIFICATION_DATA_ERR, "信道6数据有误");
+                    sendBroadcast(intent);
                     return;
                 }
                 StringBuilder stringBuffer = new StringBuilder();
@@ -237,7 +212,7 @@ public class BluetoothLeService extends Service {
                     stringBuffer.append("B7");
                 }
                 if (TextUtils.isEmpty(stringBuffer.toString())) {
-                    mThread m = new mThread(mByteNewList, characteristic);
+                    mThread m = new mThread(mByteNewList, characteristic, intent);
                     m.start();
                 } else {
                     String toString = stringBuffer.toString();
@@ -249,7 +224,8 @@ public class BluetoothLeService extends Service {
                     String jiaoYan = DataManageUtils.getJiaoYan(toString.substring(0, 2)
                             , toString.substring(toString.length() - 2, toString.length()));
                     zero.append(jiaoYan);
-                    EventBus.getDefault().post(new MsgEvent("Save6Data", "信道6数据部分重发"));
+                    intent.putExtra(NOTIFICATION_DATA_ERR, "信道6数据部分重发");
+                    sendBroadcast(intent);
                 }
             }
         } else {
@@ -270,45 +246,117 @@ public class BluetoothLeService extends Service {
     class mThread extends Thread {
         List<byte[]> mByteNewList;
         BluetoothGattCharacteristic characteristic;
+        Intent intent;
 
-        public mThread(List<byte[]> mByteNewList, BluetoothGattCharacteristic characteristic) {
+        public mThread(List<byte[]> mByteNewList, BluetoothGattCharacteristic characteristic, Intent intent) {
             this.mByteNewList = mByteNewList;
             this.characteristic = characteristic;
+            this.intent = intent;
         }
 
         @Override
         public void run() {
-            Data mData = new Data();
-            String branchCode = DataManageUtils.getBranchCode(mByteNewList.get(0));
-            mData.setWangDian(branchCode);
-            String centerCode = DataManageUtils.getCenterCode(mByteNewList.get(0), mByteNewList.get(1));
-            mData.setCenter(centerCode);
-            String muDiCode = DataManageUtils.getMuDiCode(mByteNewList.get(1));
-            mData.setMuDi(muDiCode);
-            String use = DataManageUtils.getUse(mByteNewList.get(1));
-            mData.setLiuCheng(use);
-            String l = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.L);
-            mData.setL(l);
-            String w = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.W);
-            mData.setW(w);
-            String h = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.H);
-            mData.setH(h);
-            String g = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.G);
-            mData.setG(g);
-            String v = DataManageUtils.getV(mByteNewList.get(2));
-            mData.setV(v);
-            String time = DataManageUtils.getTime(mByteNewList.get(2));
-            mData.setTime(time);
             String expressCode = DataManageUtils.getExpressCode(mByteNewList.get(3), mByteNewList.get(4));
-            mData.setBarCode(expressCode);
+            String barCode ="";
+            if (!"ffffffffffffffffffffffffffffffffffffffff".equals(expressCode)){
+                barCode=DataManageUtils.convertHexToString(expressCode);
+            }
+
+            String branchCode = DataManageUtils.getBranchCode(mByteNewList.get(0));
+            String wangDian = "";
+            if (!branchCode.equals("ffffffffffffffffffff")) {
+                wangDian = DataManageUtils.convertHexToString(branchCode);
+            }
+
+            String centerCode = DataManageUtils.getCenterCode(mByteNewList.get(0), mByteNewList.get(1));
+            String center = "";
+            if (!centerCode.equals("ffffffffffffffffffff")) {
+                center = DataManageUtils.convertHexToString(centerCode);
+            }
+
+            String muDiCode = DataManageUtils.getMuDiCode(mByteNewList.get(1));
+            String muDi = "";
+            if (!muDiCode.equals("ffffffffffffffffffff")) {
+                muDi = DataManageUtils.convertHexToString(muDiCode);
+            }
+
+            String use = DataManageUtils.getUse(mByteNewList.get(1));
+            String liuCheng = DataManageUtils.convertHexToString(use);
+
+            String length = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.L);
+            String itemL = "";
+            int l = 0;
+            if (!length.equals("ffff")) {
+                l = Integer.parseInt(length, 16);
+                itemL = l + "毫米";
+            }
+
+            String wStr = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.W);
+            String itemW = "";
+            int w = 0;
+            if (!wStr.equals("ffff")) {
+                w = Integer.parseInt(wStr, 16);
+                itemW = w + "毫米";
+            }
+
+            String hStr = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.H);
+            String itemH = "";
+            int h = 0;
+            if (!hStr.equals("ffff")) {
+                h = Integer.parseInt(hStr, 16);
+                itemH = h + "毫米";
+            }
+
+            String vStr = DataManageUtils.getV(mByteNewList.get(2));
+            String itemV = "";
+            int v = 0;
+            if (!vStr.equals("ffffffff")) {
+                v = Integer.parseInt(vStr, 16);
+                itemV = v + "";
+            }
+
+            String gStr = DataManageUtils.getLWHG(mByteNewList.get(2), DataManageUtils.G);
+            String itemG = "";
+            int g = 0;
+            if (!gStr.equals("ffff")) {
+                g = Integer.parseInt(gStr, 16);
+                itemG = g + "";
+            }
+
+            String time = DataManageUtils.getTime(mByteNewList.get(2));
+            String timeResult = "";
+            if (!time.equals("ffffffffffff")) {
+                timeResult = "20" + time.substring(10, 12) + "-"
+                        + time.substring(8, 10) + "-"
+                        + time.substring(6, 8) + " "
+                        + time.substring(4, 6) + ":"
+                        + time.substring(2, 4) + ":"
+                        + time.substring(0, 2);
+            }
+
             String mainCode = DataManageUtils.getMainCode(mByteNewList.get(4), mByteNewList.get(5));
-            mData.setZhu(mainCode);
+            String zhu = "";
+            if (!mainCode.equals("ffffffffffffffffffffffffffffffffffffffff")) {
+                zhu = DataManageUtils.convertHexToString(mainCode);
+            }
+
             String sonCode = DataManageUtils.getSonCode(mByteNewList.get(5), mByteNewList.get(6));
-            mData.setZi(sonCode);
+            String zi = "";
+            if (!sonCode.equals("ffffffffffffffffffffffffffffffffffffffff")) {
+                zi = DataManageUtils.convertHexToString(sonCode);
+            }
+
             String flag = DataManageUtils.getFlag(mByteNewList.get(6));
-            mData.setBiaoJi(flag);
-            MyApp.getDaoInstant().getDataDao().insertOrReplace(mData);
-            EventBus.getDefault().post(new MsgEvent("Save6DataSuccess", "数据存储成功"));
+            String biaoji ="";
+            if (!"ff".equals(flag)){
+                biaoji = DataManageUtils.convertHexToString(flag);
+            }
+
+            PK20Data mData = new PK20Data(barCode, wangDian, center, muDi, liuCheng, itemL, itemW, itemH, itemV
+                    , itemG, timeResult, zhu, zi, biaoji);
+
+            intent.putExtra(NOTIFICATION_DATA, mData);
+            sendBroadcast(intent);
         }
     }
 
@@ -455,12 +503,6 @@ public class BluetoothLeService extends Service {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
-//        mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
-//        List<BluetoothGattDescriptor> descriptors = characteristic.getDescriptors();
-//        for (BluetoothGattDescriptor dp : descriptors) {
-//            dp.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-//            mBluetoothGatt.writeDescriptor(dp);
-//        }
         boolean isEnableNotification = mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
         if (isEnableNotification) {
             List<BluetoothGattDescriptor> descriptorList = characteristic.getDescriptors();
@@ -471,13 +513,6 @@ public class BluetoothLeService extends Service {
                 }
             }
         }
-        // This is specific to Heart Rate Measurement.这是特定于心率测量的。
-//        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid())) {
-//            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
-//                    UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
-//            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-//            mBluetoothGatt.writeDescriptor(descriptor);
-//        }
     }
 
     /**

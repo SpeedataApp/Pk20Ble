@@ -15,7 +15,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.amobletool.bluetooth.le.R;
-import com.amobletool.bluetooth.le.downexample.MsgEvent;
+import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.MyApp;
 import com.amobletool.bluetooth.le.downexample.mvp.MVPBaseActivity;
 import com.amobletool.bluetooth.le.downexample.ui.add.AddActivity;

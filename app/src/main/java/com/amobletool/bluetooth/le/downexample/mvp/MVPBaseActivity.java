@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.amobletool.bluetooth.le.R;
-import com.amobletool.bluetooth.le.downexample.DeviceScanActivity;
+import com.amobletool.bluetooth.le.downexample.ui.DeviceScanActivity;
 
 import java.lang.reflect.ParameterizedType;
 

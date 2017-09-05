@@ -1,4 +1,4 @@
-package com.amobletool.bluetooth.le.downexample.bean;
+package speedata.com.blelib.bean;
 
 /**
  * Created by 张明_ on 2017/8/7.

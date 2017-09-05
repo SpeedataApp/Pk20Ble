@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.amobletool.bluetooth.le.downexample;
+package speedata.com.blelib.bean;
 
 import java.util.HashMap;
 

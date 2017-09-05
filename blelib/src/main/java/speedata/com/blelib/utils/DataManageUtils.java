@@ -1,6 +1,7 @@
-package com.amobletool.bluetooth.le.downexample.utils;
+package speedata.com.blelib.utils;
 
-import com.amobletool.bluetooth.le.downexample.Utils;
+
+import android.support.annotation.NonNull;
 
 /**
  * Created by 张明_ on 2017/7/5.
@@ -392,13 +393,7 @@ public class DataManageUtils {
                 result = Integer.parseInt(split[3], 16) + Integer.parseInt(split[2 + dataLengthInt], 16);
             }
 
-            String toHexString = Integer.toHexString(result).toUpperCase();
-            if (toHexString.length() == 1) {
-                toHexString = "0" + toHexString;
-            }
-            if (toHexString.length() > 2) {
-                toHexString = toHexString.substring(1, 3);
-            }
+            String toHexString = toHexString(result);
             if (!split[18].equals(toHexString)) {
                 return -1;
             }
@@ -410,6 +405,18 @@ public class DataManageUtils {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    @NonNull
+    public static String toHexString(int result) {
+        String toHexString = Integer.toHexString(result).toUpperCase();
+        if (toHexString.length() == 1) {
+            toHexString = "0" + toHexString;
+        }
+        if (toHexString.length() > 2) {
+            toHexString = toHexString.substring(1, 3);
+        }
+        return toHexString;
     }
 
     public static int jiaoYan6(byte[] bytes1, byte[] bytes7) {
@@ -425,9 +432,9 @@ public class DataManageUtils {
             toHexString = "0" + toHexString;
         }
         if (toHexString.length() > 2) {
-            toHexString = toHexString.substring(toHexString.length()-2, toHexString.length());
+            toHexString = toHexString.substring(toHexString.length() - 2, toHexString.length());
         }
-        byte[] bytes = Utils.HexString2Bytes(toHexString);
+        byte[] bytes = HexString2Bytes(toHexString);
         if (bytes[0] != bytes7[18]) {
             return -1;
         }
@@ -437,20 +444,20 @@ public class DataManageUtils {
 
 
     //16进制转换为ASCII
-    public static String convertHexToString(String hex){
+    public static String convertHexToString(String hex) {
 
         StringBuilder sb = new StringBuilder();
         StringBuilder temp = new StringBuilder();
 
         //49204c6f7665204a617661 split into two characters 49, 20, 4c...
-        for( int i=0; i<hex.length()-1; i+=2 ){
+        for (int i = 0; i < hex.length() - 1; i += 2) {
 
             //grab the hex in pairs
             String output = hex.substring(i, (i + 2));
             //convert hex to decimal
             int decimal = Integer.parseInt(output, 16);
             //convert the decimal to character
-            sb.append((char)decimal);
+            sb.append((char) decimal);
 
             temp.append(decimal);
         }
@@ -459,15 +466,77 @@ public class DataManageUtils {
     }
 
     //ASCII码转换为16进制
-    public String convertStringToHex(String str){
+    public String convertStringToHex(String str) {
 
         char[] chars = str.toCharArray();
 
         StringBuffer hex = new StringBuffer();
-        for(int i = 0; i < chars.length; i++){
-            hex.append(Integer.toHexString((int)chars[i]));
+        for (int i = 0; i < chars.length; i++) {
+            hex.append(Integer.toHexString((int) chars[i]));
         }
 
         return hex.toString();
+    }
+
+
+    /**
+     * 将指定字符串src，以每两个字符分割转换为16进制形式 如："2B44EFD9" --> byte[]{0x2B, 0x44, 0xEF,
+     * 0xD9}
+     *
+     * @param temp String
+     * @return byte[]
+     */
+    public static byte[] HexString2Bytes(String temp) {
+        String src = temp.replace(" ", "");
+        System.out.println(" src= " + src);
+        byte[] ret = new byte[src.length() / 2];
+        byte[] tmp = src.getBytes();
+        for (int i = 0; i < src.length() / 2; i++) {
+            ret[i] = uniteBytes(tmp[i * 2], tmp[i * 2 + 1]);
+        }
+        return ret;
+    }
+
+    /**
+     * 将两个ASCII字符合成一个字节； 如："EF"--> 0xEF
+     *
+     * @param src0 byte
+     * @param src1 byte
+     * @return byte
+     */
+    public static byte uniteBytes(byte src0, byte src1) {
+        try {
+            byte _b0 = Byte.decode("0x" + new String(new byte[]{src0}))
+                    .byteValue();
+            _b0 = (byte) (_b0 << 4);
+            byte _b1 = Byte.decode("0x" + new String(new byte[]{src1}))
+                    .byteValue();
+            byte ret = (byte) (_b0 ^ _b1);
+            return ret;
+        } catch (Exception e) {
+            // TODO: handle exception
+            return 0;
+        }
+
+    }
+
+    private static byte charToByte(char c) {
+        return (byte) "0123456789ABCDEF".indexOf(c);
+    }
+
+    public static String bytesToHexString(byte[] src) {
+        StringBuilder stringBuilder = new StringBuilder("");
+        if (src == null || src.length <= 0) {
+            return null;
+        }
+        for (int i = 0; i < src.length; i++) {
+            int v = src[i] & 0xFF;
+            String hv = Integer.toHexString(v);
+            if (hv.length() < 2) {
+                stringBuilder.append(0);
+            }
+            stringBuilder.append(hv);
+        }
+        return stringBuilder.toString();
     }
 }

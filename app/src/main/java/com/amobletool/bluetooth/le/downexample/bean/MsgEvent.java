@@ -1,4 +1,4 @@
-package com.amobletool.bluetooth.le.downexample;
+package com.amobletool.bluetooth.le.downexample.bean;
 
 
 public class MsgEvent {

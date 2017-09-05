@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -134,5 +135,27 @@ public class AddActivity extends MVPBaseActivity<AddContract.View, AddPresenter>
         spinnerList.add(sp5);
         spinnerList.add(sp6);
         spinnerList.add(sp7);
+    }
+
+    private long mkeyTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+            case KeyEvent.ACTION_DOWN:
+                if ((System.currentTimeMillis() - mkeyTime) > 2000) {
+                    mkeyTime = System.currentTimeMillis();
+                    Toast.makeText(AddActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        finish();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

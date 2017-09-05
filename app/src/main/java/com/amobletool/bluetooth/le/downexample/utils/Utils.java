@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.amobletool.bluetooth.le.downexample;
+package com.amobletool.bluetooth.le.downexample.utils;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;

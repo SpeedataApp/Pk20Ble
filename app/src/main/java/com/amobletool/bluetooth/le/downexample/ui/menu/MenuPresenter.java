@@ -1,6 +1,6 @@
 package com.amobletool.bluetooth.le.downexample.ui.menu;
 
-import com.amobletool.bluetooth.le.downexample.MsgEvent;
+import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.MyApp;
 import com.amobletool.bluetooth.le.downexample.mvp.BasePresenterImpl;
 

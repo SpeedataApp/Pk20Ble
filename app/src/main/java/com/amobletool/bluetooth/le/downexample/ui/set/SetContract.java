@@ -22,5 +22,8 @@ public class SetContract {
         void setZiKu(Activity activity,ProgressDialog progressDialog);
         void setClean();
         void setYousu(Activity activity,ProgressDialog progressDialog);
+        void setSpeedata(Activity activity,ProgressDialog progressDialog);
+        void setCleanFlash();
+        void setLeastBili(String s);
     }
 }

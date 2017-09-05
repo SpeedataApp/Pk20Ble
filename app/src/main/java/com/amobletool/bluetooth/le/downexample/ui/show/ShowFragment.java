@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.amobletool.bluetooth.le.R;
-import com.amobletool.bluetooth.le.downexample.MsgEvent;
+import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.MyApp;
 import com.amobletool.bluetooth.le.downexample.adapter.RVAdapter;
 import com.amobletool.bluetooth.le.downexample.bean.Data;

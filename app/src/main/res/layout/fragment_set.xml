@@ -20,22 +20,6 @@
                 android:layout_height="wrap_content"
                 android:text="设置时间" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="设置体积重比例系数（小于60000）" />
-
-            <EditText
-                android:id="@+id/et_bili"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/btn_bili"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="设置体积重比例系数" />
-
 
             <Button
                 android:id="@+id/btn_ziku"
@@ -52,6 +36,51 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="设置优速快递为公司名" />
+            <Button
+                android:id="@+id/btn_speedata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="设置思必拓为公司名" />
+            <Button
+                android:id="@+id/btn_clean_flash"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="清除FLASH" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设置体积重比例系数（小于60000）" />
+
+            <EditText
+                android:inputType="number"
+                android:id="@+id/et_bili"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btn_bili"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="设置体积重比例系数" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设置体积重最小值（小于100）" />
+
+            <EditText
+                android:inputType="number"
+                android:id="@+id/et_bili_least"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btn_bili_least"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="设置体积重最小值" />
+
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

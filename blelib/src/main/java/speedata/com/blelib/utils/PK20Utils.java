@@ -1,4 +1,4 @@
-package com.amobletool.bluetooth.le.downexample.utils;
+package speedata.com.blelib.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,8 +50,8 @@ public class PK20Utils {
         }
         int high = ratio >> 8 & 0xff;
         int low = ratio >> 0 & 0xff;
-        String highStr = Integer.toHexString(high);
-        String lowStr = Integer.toHexString(low);
+        String highStr = DataManageUtils.toHexString(high);
+        String lowStr = DataManageUtils.toHexString(low);
         String jiaoYan = DataManageUtils.getJiaoYan(highStr, lowStr);
         return "FF0D03" + highStr + lowStr +
                 "00000000000000000000000000" + jiaoYan + "00";
@@ -130,5 +130,52 @@ public class PK20Utils {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * 获取清除FLASH发送数据
+     * @return String
+     */
+    public static String getCleanFlashData(){
+        return "FF11010000000000000000000000000000000000";
+    }
+
+    /**
+     * 检测清除FLASH返回的数据是否正确
+     *
+     * @param data 清除FLASH返回的数据
+     * @return 0为正确 -1数据格式不正确 -2重发指令 -3部分重发
+     */
+    public static int checkCleanFlashBackData(String data) {
+        return DataManageUtils.jiaoYanData(data, "FF", "11");
+    }
+
+
+    /**
+     * 获取设置最小比例的发送数据
+     * @param ratio int
+     * @return 设置最小比例的发送数据
+     */
+    public static String getSetLeastRatioData(int ratio) {
+        if (ratio > 100) {
+            return null;
+        }
+        int high = ratio >> 8 & 0xff;
+        int low = ratio >> 0 & 0xff;
+        String highStr = DataManageUtils.toHexString(high);
+        String lowStr = DataManageUtils.toHexString(low);
+        String jiaoYan = DataManageUtils.getJiaoYan(highStr, lowStr);
+        return "FF1203" + highStr + lowStr +
+                "00000000000000000000000000" + jiaoYan + "00";
+    }
+
+    /**
+     * 检测设置最小比例返回的数据是否正确
+     *
+     * @param data 设置最小比例返回的数据
+     * @return 0为正确 -1数据格式不正确 -2重发指令 -3部分重发
+     */
+    public static int checkSetLeastRatioBackData(String data) {
+        return DataManageUtils.jiaoYanData(data, "FF", "12");
     }
 }

@@ -5,17 +5,19 @@ import android.app.ProgressDialog;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
-import com.amobletool.bluetooth.le.downexample.MsgEvent;
+import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.MyApp;
-import com.amobletool.bluetooth.le.downexample.bean.YouSuData;
-import com.amobletool.bluetooth.le.downexample.bean.ZiKuData;
 import com.amobletool.bluetooth.le.downexample.mvp.BasePresenterImpl;
-import com.amobletool.bluetooth.le.downexample.utils.PK20Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import speedata.com.blelib.bean.SpeedataData;
+import speedata.com.blelib.bean.YouSuData;
+import speedata.com.blelib.bean.ZiKuData;
+import speedata.com.blelib.utils.PK20Utils;
 
 import static com.amobletool.bluetooth.le.downexample.MyApp.mNotifyCharacteristic3;
 
@@ -246,6 +248,109 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
         } else {
             EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
             progressDialog.cancel();
+        }
+    }
+
+    @Override
+    public void setSpeedata(final Activity activity, final ProgressDialog progressDialog) {
+        count = 0;
+        i = 0;
+        if (mNotifyCharacteristic3 != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    sendData(SpeedataData.getData1(0), SpeedataData.getData2(0));
+                    MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
+                        @Override
+                        public void getData(final String data) {
+                            isSend = true;
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    SystemClock.sleep(50);
+                                    if (count > 5) {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressDialog.cancel();
+                                            }
+                                        });
+                                        EventBus.getDefault().post(new MsgEvent("Notification"
+                                                , "失败次数过多，请检查设备状态"));
+                                        return;
+                                    }
+                                    int result = checkMoreResult(data, SpeedataData.getData1(i),
+                                            SpeedataData.getData2(i), false);
+                                    if (result == 0) {
+                                        count = 0;
+                                        i++;
+                                        if (i == 4) {
+                                            activity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    progressDialog.cancel();
+                                                }
+                                            });
+                                            EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+                                            return;
+                                        }
+                                        sendData(SpeedataData.getData1(i), SpeedataData.getData2(i));
+                                    }
+                                }
+                            }).start();
+
+                        }
+                    });
+                }
+            }).start();
+
+        } else {
+            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            progressDialog.cancel();
+        }
+    }
+
+    @Override
+    public void setCleanFlash() {
+        String cleanData = PK20Utils.getCleanFlashData();
+        if (mNotifyCharacteristic3 != null) {
+            MyApp.getInstance().writeCharacteristic3(cleanData);
+            MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
+                @Override
+                public void getData(String data) {
+                    int checkCleanFlashBackData = PK20Utils.checkCleanFlashBackData(data);
+                    seeResult(checkCleanFlashBackData);
+                }
+            });
+        } else {
+            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+        }
+    }
+
+    @Override
+    public void setLeastBili(String s) {
+        try {
+            int parseInt = Integer.parseInt(s);
+            String setRatioData = PK20Utils.getSetLeastRatioData(parseInt);
+            if (TextUtils.isEmpty(setRatioData)) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+                return;
+            }
+            if (mNotifyCharacteristic3 != null) {
+                MyApp.getInstance().writeCharacteristic3(setRatioData);
+                MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
+                    @Override
+                    public void getData(String data) {
+                        int checkSetRatioBackData = PK20Utils.checkSetLeastRatioBackData(data);
+                        seeResult(checkSetRatioBackData);
+                    }
+                });
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
         }
     }
 

@@ -11,19 +11,20 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.amobletool.bluetooth.le.R;
-import com.amobletool.bluetooth.le.downexample.MsgEvent;
+import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.MyApp;
 import com.amobletool.bluetooth.le.downexample.adapter.CommonAdapter;
 import com.amobletool.bluetooth.le.downexample.adapter.ViewHolder;
 import com.amobletool.bluetooth.le.downexample.bean.LiuCheng;
 import com.amobletool.bluetooth.le.downexample.bean.LiuChengDao;
 import com.amobletool.bluetooth.le.downexample.mvp.MVPBaseFragment;
-import com.amobletool.bluetooth.le.downexample.utils.DataManageUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import speedata.com.blelib.utils.DataManageUtils;
 
 import static com.amobletool.bluetooth.le.downexample.MyApp.mNotifyCharacteristic3;
 

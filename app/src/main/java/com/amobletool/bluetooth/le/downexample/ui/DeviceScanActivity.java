@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.amobletool.bluetooth.le.downexample;
+package com.amobletool.bluetooth.le.downexample.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -38,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amobletool.bluetooth.le.R;
+import com.amobletool.bluetooth.le.downexample.MyApp;
 
 import java.util.ArrayList;
 
