@@ -149,7 +149,7 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                                     if (result == 0) {
                                         count = 0;
                                         i++;
-                                        if (i == 68) {
+                                        if (i == 69) {
                                             activity.runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {

@@ -1,7 +1,9 @@
 package com.amobletool.bluetooth.le.downexample.ui.menu;
 
-import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
+import android.util.Log;
+
 import com.amobletool.bluetooth.le.downexample.MyApp;
+import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.mvp.BasePresenterImpl;
 
 import org.greenrobot.eventbus.EventBus;
@@ -15,11 +17,6 @@ public class MenuPresenter extends BasePresenterImpl<MenuContract.View> implemen
 
     @Override
     public void toggleOnCheckedChangeListener(boolean isCheck) {
-        if (isCheck){
-            MyApp.getInstance().connect();
-        }else {
-            MyApp.getInstance().disconnect();
-            EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", false));
-        }
+
     }
 }

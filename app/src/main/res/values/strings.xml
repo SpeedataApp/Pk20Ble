@@ -34,29 +34,7 @@
     <string name="menu_disconnect">Disconnect</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
+    <string name="device_rssi">rssi信号</string>
+    <string name="text_detail">detail</string>
 
-    <!-- ui -->
-    <string name="main_btn1">业务员</string>
-    <string name="main_btn2">网点</string>
-    <string name="main_btn3">分拨</string>
-    <string name="main_btn4">空运货代</string>
-
-    <string name="courier_btn1">【1】揽收</string>
-    <string name="courier_btn2">【2】揽收体积测量</string>
-    <string name="courier_btn3">【3】揽收称重+体积测量</string>
-
-    <string name="branch_btn4">【4】网点到件</string>
-    <string name="branch_btn5">【5】网点收件+体积测量</string>
-    <string name="branch_btn6">【6】网点收件+体积测量+称重</string>
-    <string name="branch_btn7">【7】网点体积测量</string>
-    <string name="branch_btn8">【8】网点发件</string>
-
-    <string name="allocate_btn9">【9】中心收件+体积测量</string>
-    <string name="allocate_btn10">【10】中心收件+体积测量+称重</string>
-    <string name="allocate_btn11">【11】中心提及测量</string>
-
-    <string name="air_btn12">【12】单位体积测量</string>
-    <string name="air_btn13">【13】单位体积测量+称重</string>
-    <string name="air_btn14">【14】单位合并体积测量</string>
-    <string name="air_btn15">【15】单位合并体积测量+称重</string>
 </resources>

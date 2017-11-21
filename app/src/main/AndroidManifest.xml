@@ -39,7 +39,6 @@ limitations under the License.
             android:label="@string/app_name" >
         </activity>
 
-        <service android:name="speedata.com.blelib.service.BluetoothLeService" android:enabled="true"/>
         <activity android:name=".downexample.ui.menu.MenuActivity"
             android:windowSoftInputMode="adjustUnspecified|stateHidden">
             <intent-filter>

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.amobletool.bluetooth.le.downexample.bean.DaoMaster;
@@ -138,10 +139,11 @@ public class MyApp extends BaseBleApplication {
                 EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", true));
             } else if (ACTION_GATT_DISCONNECTED.equals(action)) {
                 EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", false));
-                address = null;
-                name = null;
+//                address = null;
+//                name = null;
                 unregisterReceiver(mGattUpdateReceiver);
                 Toast.makeText(MyApp.this, "断开连接", Toast.LENGTH_SHORT).show();
+                Log.d("ZM_connect", "application里面的断开连接");
             }  else if (ACTION_DATA_AVAILABLE.equals(action)) {
                 String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                 if (TextUtils.isEmpty(data)) {

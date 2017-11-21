@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -15,8 +16,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.amobletool.bluetooth.le.R;
-import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.MyApp;
+import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.mvp.MVPBaseActivity;
 import com.amobletool.bluetooth.le.downexample.ui.add.AddActivity;
 import com.amobletool.bluetooth.le.downexample.ui.assign.AssignFragment;
@@ -69,9 +70,9 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
             closeFragment();
             if ("show".equals(whichFragment)) {
                 openFragment(new ShowFragment());
-            } else if ("assign".equals(whichFragment)){
+            } else if ("assign".equals(whichFragment)) {
                 openFragment(new AssignFragment());
-            }else {
+            } else {
                 openFragment(new SetFragment());
             }
         }
@@ -83,19 +84,25 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
         Object msg = msgEvent.getMsg();
         if ("ServiceConnectedStatus".equals(type)) {
             boolean result = (boolean) msg;
-            btn_serviceStatus.setChecked(result);
+            Log.d("ZM_connect", "First:" + result);
+
             if (result) {
                 ll.setVisibility(View.VISIBLE);
+                Log.d("ZM_connect", "显示连接按键");
                 device_address.setText("Address：" + MyApp.address);
                 device_name.setText("Name：" + MyApp.name);
             } else {
                 ll.setVisibility(View.GONE);
+                Log.d("ZM_connect", "隐藏连接按键");
             }
+            btn_serviceStatus.setChecked(result);
+            Log.d("ZM_connect", "" + result);
+
         } else if ("Notification".equals(type)) {
             Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
-        }else if ("Save6Data".equals(type)){
+        } else if ("Save6Data".equals(type)) {
             Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
-        }else if ("Save6DataSuccess".equals(type)){
+        } else if ("Save6DataSuccess".equals(type)) {
             MyApp.getInstance().writeCharacteristic6("AA0A020100000000000000000000000000000200");
             Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
         }
@@ -115,7 +122,14 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
         btn_serviceStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mPresenter.toggleOnCheckedChangeListener(isChecked);
+                if (isChecked) {
+                    MyApp.getInstance().connect();
+                    Log.d("ZM_connect", "点击了连接");
+                } else {
+                    MyApp.getInstance().disconnect();
+                    EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", false));
+                    Log.d("ZM_connect", "点击了断开");
+                }
             }
         });
 

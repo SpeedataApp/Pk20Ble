@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.amobletool.bluetooth.le.R;
 import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
@@ -29,10 +30,11 @@ import xyz.reginer.baseadapter.CommonRvAdapter;
  */
 
 public class ShowFragment extends MVPBaseFragment<ShowContract.View, ShowPresenter>
-        implements ShowContract.View ,CommonRvAdapter.OnItemClickListener{
+        implements ShowContract.View, CommonRvAdapter.OnItemClickListener {
 
     private RecyclerView rv_content;
     private List<Data> datas;
+    private TextView tv_countNum;
 
     @Override
     public int getLayout() {
@@ -46,15 +48,18 @@ public class ShowFragment extends MVPBaseFragment<ShowContract.View, ShowPresent
         initView(view);
         EventBus.getDefault().register(this);
         datas = MyApp.getDaoInstant().getDataDao().loadAll();
+        tv_countNum.setText("数据总数：" + datas.size());
         initRV();
     }
 
     private void initView(View view) {
-        rv_content= (RecyclerView) view.findViewById(R.id.rv_content);
+        rv_content = (RecyclerView) view.findViewById(R.id.rv_content);
+        tv_countNum = (TextView) view.findViewById(R.id.tv_countNum);
     }
 
     private RVAdapter mAdapter;
     private LinearLayoutManager layoutManager;
+
     private void initRV() {
         mAdapter = new RVAdapter(getActivity(), R.layout.info_show, datas);
         rv_content.addItemDecoration(new DividerItemDecoration(getActivity(),
@@ -81,10 +86,10 @@ public class ShowFragment extends MVPBaseFragment<ShowContract.View, ShowPresent
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void Msg(MsgEvent msgEvent){
+    public void Msg(MsgEvent msgEvent) {
         String type = msgEvent.getType();
         Object msg = msgEvent.getMsg();
-        if ("Save6DataSuccess".equals(type)){
+        if ("Save6DataSuccess".equals(type)) {
             closeFragment();
             openFragment(new ShowFragment());
         }
