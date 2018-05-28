@@ -1,7 +1,14 @@
 package speedata.com.blelib.utils;
 
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by 张明_ on 2017/7/5.
@@ -29,6 +36,43 @@ public class DataManageUtils {
         }
         return stringBuilder.toString();
     }
+
+    /**
+     * byte[] -> ascii String
+     * {0x71,0x72,0x73,0x41,0x42}->"qrsAB"
+     *
+     * @param byteArray byte[]
+     * @return String
+     */
+    public static String toAsciiString(byte[] byteArray) {
+        int byteLength = byteArray.length;
+        StringBuilder tStringBuf = new StringBuilder();
+        String nRcvString;
+        char[] tChars = new char[byteLength];
+        for (int i = 0; i < byteLength; i++) {
+            tChars[i] = (char) byteArray[i];
+        }
+        tStringBuf.append(tChars);
+        nRcvString = tStringBuf.toString();
+        return nRcvString;
+    }
+
+    public static int L3 = 3;
+    public static int W3 = 5;
+    public static int H3 = 7;
+
+    //信道3数据获取长宽高
+    public static String getLWH(byte[] data, int srcPos) {
+        byte[] result = new byte[2];
+        try {
+            System.arraycopy(data, srcPos, result, 0, 2);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return byteArrayToString(result);
+    }
+
 
     //获取网点代码
     public static String getBranchCode(byte[] data) {
@@ -204,13 +248,32 @@ public class DataManageUtils {
         return null;
     }
 
-    //获取标记
-    public static String getFlag(byte[] data) {
+    //获取Mac
+    public static String getMac(byte[] data, byte[] data2) {
         byte b = data[0];
-        if (b == (byte) 0xB7) {
+        byte c = data2[0];
+        if (b == (byte) 0xB7 && c == (byte) 0xB8) {
+            byte[] result = new byte[17];
+            try {
+                System.arraycopy(data, 7, result, 0, 12);
+                System.arraycopy(data2, 1, result, 12, 5);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            return toAsciiString(result);
+        }
+        return null;
+    }
+
+
+    //获取标识位
+    public static String getIdentify(byte[] data) {
+        byte b = data[0];
+        if (b == (byte) 0xB8) {
             byte[] result = new byte[1];
             try {
-                System.arraycopy(data, 15, result, 0, 1);
+                System.arraycopy(data, 6, result, 0, 1);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -219,6 +282,84 @@ public class DataManageUtils {
         }
         return null;
     }
+
+
+    //获取标记
+    public static String getFlag(byte[] data) {
+        byte b = data[0];
+        if (b == (byte) 0xB9) {
+            byte[] result = new byte[1];
+            try {
+                System.arraycopy(data, 17, result, 0, 1);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            return byteArrayToString(result);
+        }
+        return null;
+    }
+
+
+    //获取操作员姓名
+    public static String getName(byte[] data, byte[] data2) {
+        byte b = data[0];
+        byte c = data2[0];
+        if (b == (byte) 0xB8 && c == (byte) 0xB9) {
+            byte[] result = new byte[17];
+            try {
+                System.arraycopy(data, 7, result, 0, 12);
+                System.arraycopy(data2, 1, result, 12, 5);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            int indexOf = ByteIndexOf(result, new byte[]{0x00}, 0);
+            byte[] finalResult = new byte[indexOf];
+            System.arraycopy(result, 0, finalResult, 0, indexOf);
+            try {
+                return new String(finalResult, "gb18030");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * byte数组中搜索byte[]
+     *
+     * @param searched
+     * @param find
+     * @param start
+     * @return
+     */
+    public static int ByteIndexOf(byte[] searched, byte[] find, int start) {
+        boolean matched = false;
+        int end = find.length - 1;
+        int skip = 0;
+        for (int index = start; index <= searched.length - find.length; ++index) {
+            matched = true;
+            if (find[0] != searched[index] || find[end] != searched[index + end]) continue;
+            else skip++;
+            if (end > 10)
+                if (find[skip] != searched[index + skip] || find[end - skip] != searched[index + end - skip])
+                    continue;
+                else skip++;
+            for (int subIndex = skip; subIndex < find.length - skip; ++subIndex) {
+                if (find[subIndex] != searched[index + subIndex]) {
+                    matched = false;
+                    break;
+                }
+            }
+            if (matched) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
 
     //10进制转16进制
     public static String IntToHex(int n) {
@@ -407,6 +548,48 @@ public class DataManageUtils {
         }
     }
 
+    /**
+     * 检验数据是否正确
+     *
+     * @param data    数据
+     * @param tou     数据头
+     * @param zhiling 指令
+     * @return
+     */
+    public static int jiaoYanLWHData(String data, String tou, String zhiling) {
+        try {
+            String[] split = data.split(" ");
+            if (!split[0].equals(tou)) {
+                return -1;
+            }
+            if (!split[1].equals(zhiling)) {
+                if (split[1].equals("01")) {
+                    return -2;
+                } else if (split[1].equals("02")) {
+                    return -3;
+                }
+                return -1;
+            }
+            String dataLength = split[2];
+            int dataLengthInt = Integer.parseInt(dataLength, 16) - 1;
+            int result = 0;
+            if (dataLengthInt == 0) {
+                result = Integer.parseInt(split[3], 16);
+            } else {
+                result = Integer.parseInt(split[3], 16) + Integer.parseInt(split[2 + dataLengthInt], 16);
+            }
+
+            String toHexString = toHexString(result);
+            if (!split[18].equals(toHexString)) {
+                return -1;
+            }
+            return 0;
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     @NonNull
     public static String toHexString(int result) {
         String toHexString = Integer.toHexString(result).toUpperCase();
@@ -426,7 +609,7 @@ public class DataManageUtils {
         if ((byte) 0x0A != bytes1[1]) {
             return -1;
         }
-        int result = bytes1[4] + bytes7[15];
+        int result = bytes1[4] + bytes7[17];
         String toHexString = Integer.toHexString(result).toUpperCase();
         if (toHexString.length() == 1) {
             toHexString = "0" + toHexString;
@@ -538,5 +721,107 @@ public class DataManageUtils {
             stringBuilder.append(hv);
         }
         return stringBuilder.toString();
+    }
+
+
+    /* 中文字符地址偏移算法 */
+    public static int getOffset(int c) {
+        int c1, c2;
+        int addr = -1;
+        c1 = (c >> 8) & 0xFF;
+        c2 = c & 0xFF;
+        if (c1 >= 0xb0 && c2 >= 0xa1) {
+            addr = ((c1 - 0xb0) * 94 + (c2 - 0xa1)) * 32;
+        }
+
+        if (c1 > 0x80 && c1 < 0xa1 && c2 >= 0x40) {
+            addr = ((c1 - 0x81) * 190 + (c2 - 0x40)) * 32 + 6767 * 32;
+        }
+
+        if (c1 >= 0xaa && c2 >= 0x40 && c2 < 0xa1) {
+            addr = ((c1 - 0xaa) * 96 + (c2 - 0x40)) * 32 + (6767 + 6080) * 32;
+        }
+        return addr;
+
+    }
+
+    /* 字符地址偏移算法 */
+    public static int getAsciiOffset(int ch) {
+        return ch * 16;     //get fontdata
+    }
+
+
+    /**
+     * 根据偏移量获取中文矩阵点
+     *
+     * @param offset
+     * @return
+     */
+    public static byte[] getChineseBytes(Context context, int offset) {
+        byte[] frameBuffer = new byte[offset + 32];
+        try {
+            AssetManager assetManager = context.getResources().getAssets();
+            InputStream inputStream = null;
+            try {
+                inputStream = assetManager.open("Font_GB18030.bin");
+            } catch (IOException iOException) {
+                iOException.printStackTrace();
+            }
+            if (inputStream != null) {
+//                inputStream.read(frameBuffer, offset, frameBuffer.length);
+                inputStream.read(frameBuffer);
+            }
+            inputStream.close();
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        } catch (IOException iOException) {
+            iOException.printStackTrace();
+        }
+
+        return arrayCopy(frameBuffer, offset, 32);
+    }
+
+    /**
+     * 根据偏移量获取中文矩阵点
+     *
+     * @param offset
+     * @return
+     */
+    public static byte[] getAsciiBytes(Context context, int offset) {
+        byte[] frameBuffer = new byte[offset + 16];
+        try {
+            AssetManager assetManager = context.getResources().getAssets();
+            InputStream inputStream = null;
+            try {
+                inputStream = assetManager.open("Font816.bin");
+            } catch (IOException iOException) {
+                iOException.printStackTrace();
+            }
+            if (inputStream != null) {
+                inputStream.read(frameBuffer);
+            }
+            inputStream.close();
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        } catch (IOException iOException) {
+            iOException.printStackTrace();
+        }
+
+        return arrayCopy(frameBuffer, offset, 16);
+    }
+
+
+    /**
+     * 从bytes上截取一段
+     *
+     * @param bytes  母体
+     * @param off    起始
+     * @param length 个数
+     * @return byte[]
+     */
+    public static byte[] arrayCopy(byte[] bytes, int off, int length) {
+        byte[] bytess = new byte[length];
+        System.arraycopy(bytes, off, bytess, 0, length);
+        return bytess;
     }
 }

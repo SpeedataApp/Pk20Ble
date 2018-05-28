@@ -17,13 +17,13 @@ import com.amobletool.bluetooth.le.downexample.bean.Data;
 import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.bean.Word;
 import com.amobletool.bluetooth.le.downexample.bean.WordDao;
-import com.amobletool.bluetooth.le.downexample.utils.SharedXmlUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
 import speedata.com.blelib.base.BaseBleApplication;
+import speedata.com.blelib.bean.LWHData;
 import speedata.com.blelib.bean.PK20Data;
 import speedata.com.blelib.service.BluetoothLeService;
 
@@ -43,6 +43,7 @@ public class MyApp extends BaseBleApplication {
     public static String name = "";
     //greendao
     private static DaoSession daoSession;
+    public static boolean cn;
 
     private void setupDatabase() {
         //创建数据库
@@ -64,20 +65,19 @@ public class MyApp extends BaseBleApplication {
         super.onCreate();
         m_application = this;
         setupDatabase();
-        boolean haveWord = SharedXmlUtil.getInstance(this).read("haveWord", false);
-        if (!haveWord) {
-            //创建字库
-            makeWordKu();
-            SharedXmlUtil.getInstance(this).write("haveWord", true);
-        }
-
+//        boolean haveWord = SharedXmlUtil.getInstance(this).read("haveWord", false);
+//        if (!haveWord) {
+//            //创建字库
+//            makeWordKu();
+//            SharedXmlUtil.getInstance(this).write("haveWord", true);
+//        }
+        cn = getApplicationContext().getResources().getConfiguration().locale.getCountry().equals("CN");
     }
 
 
     public static MyApp getInstance() {
         return m_application;
     }
-
 
 
     /**
@@ -113,8 +113,9 @@ public class MyApp extends BaseBleApplication {
         address = device.getAddress();
         name = device.getName();
         bindServiceAndRegisterReceiver(device);
-        registerReceiver(mGattUpdateReceiver,makeGattUpdateIntentFilter());
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
     }
+
     private IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_GATT_CONNECTED);
@@ -135,41 +136,69 @@ public class MyApp extends BaseBleApplication {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (ACTION_GATT_CONNECTED.equals(action)) {
-                Toast.makeText(MyApp.this, "连接成功", Toast.LENGTH_SHORT).show();
+                EventBus.getDefault().post(new MsgEvent("KP", false));
+                boolean cn = getApplicationContext().getResources().getConfiguration().locale.getCountry().equals("CN");
+                if (cn) {
+                    Toast.makeText(getApplicationContext(), "已连接", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Connection", Toast.LENGTH_LONG).show();
+                }
                 EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", true));
             } else if (ACTION_GATT_DISCONNECTED.equals(action)) {
                 EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", false));
-//                address = null;
-//                name = null;
-                unregisterReceiver(mGattUpdateReceiver);
-                Toast.makeText(MyApp.this, "断开连接", Toast.LENGTH_SHORT).show();
+                boolean cn = getApplicationContext().getResources().getConfiguration().locale.getCountry().equals("CN");
+                if (cn) {
+                    Toast.makeText(getApplicationContext(), "已断开", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Disconnect", Toast.LENGTH_LONG).show();
+                }
+
                 Log.d("ZM_connect", "application里面的断开连接");
-            }  else if (ACTION_DATA_AVAILABLE.equals(action)) {
+                if (wantDisconnect) {
+                    unregisterReceiver(mGattUpdateReceiver);
+                } else {
+                    EventBus.getDefault().post(new MsgEvent("KP", true));
+                }
+            } else if (ACTION_DATA_AVAILABLE.equals(action)) {
                 String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                 if (TextUtils.isEmpty(data)) {
-                    String dataERR = intent.getStringExtra(BluetoothLeService.NOTIFICATION_DATA_ERR);
-                    if (TextUtils.isEmpty(dataERR)){
-                        PK20Data mPK20Data = intent.getParcelableExtra(BluetoothLeService.NOTIFICATION_DATA);
-                        Data mData = new Data();
-                        mData.setWangDian(mPK20Data.wangDian);
-                        mData.setCenter(mPK20Data.center);
-                        mData.setMuDi(mPK20Data.muDi);
-                        mData.setLiuCheng(mPK20Data.liuCheng);
-                        mData.setL(mPK20Data.L);
-                        mData.setW(mPK20Data.W);
-                        mData.setH(mPK20Data.H);
-                        mData.setG(mPK20Data.G);
-                        mData.setV(mPK20Data.V);
-                        mData.setTime(mPK20Data.time);
-                        mData.setBarCode(mPK20Data.barCode);
-                        mData.setZhu(mPK20Data.zhu);
-                        mData.setZi(mPK20Data.zi);
-                        mData.setBiaoJi(mPK20Data.biaoJi);
-                        MyApp.getDaoInstant().getDataDao().insertOrReplace(mData);
-                        EventBus.getDefault().post(new MsgEvent("Save6DataSuccess", "数据存储成功"));
-                    }else {
-                        EventBus.getDefault().post(new MsgEvent("Save6Data", dataERR));
+                    LWHData lwh = intent.getParcelableExtra(BluetoothLeService.NOTIFICATION_DATA_LWH);
+                    if (lwh != null) {
+                        EventBus.getDefault().post(new MsgEvent("LWHData", lwh));
+                    } else {
+                        String dataERR = intent.getStringExtra(BluetoothLeService.NOTIFICATION_DATA_ERR);
+                        if (TextUtils.isEmpty(dataERR)) {
+                            PK20Data mPK20Data = intent.getParcelableExtra(BluetoothLeService.NOTIFICATION_DATA);
+                            Data mData = new Data();
+                            mData.setWangDian(mPK20Data.wangDian);
+                            mData.setCenter(mPK20Data.center);
+                            mData.setMuDi(mPK20Data.muDi);
+                            mData.setLiuCheng(mPK20Data.liuCheng);
+                            mData.setL(mPK20Data.L);
+                            mData.setW(mPK20Data.W);
+                            mData.setH(mPK20Data.H);
+                            mData.setG(mPK20Data.G);
+                            mData.setV(mPK20Data.V);
+                            mData.setTime(mPK20Data.time);
+                            mData.setBarCode(mPK20Data.barCode);
+                            mData.setZhu(mPK20Data.zhu);
+                            mData.setZi(mPK20Data.zi);
+                            mData.setBiaoJi(mPK20Data.biaoJi);
+                            mData.setBiaoshi(mPK20Data.biaoshi);
+                            mData.setMac(mPK20Data.mac);
+                            mData.setName(mPK20Data.name);
+                            MyApp.getDaoInstant().getDataDao().insertOrReplace(mData);
+                            boolean cn = getApplicationContext().getResources().getConfiguration().locale.getCountry().equals("CN");
+                            if (cn) {
+                                EventBus.getDefault().post(new MsgEvent("Save6DataSuccess", "数据存储成功"));
+                            } else {
+                                EventBus.getDefault().post(new MsgEvent("Save6DataSuccess", "Data storage success"));
+                            }
+                        } else {
+                            EventBus.getDefault().post(new MsgEvent("Save6Data", dataERR));
+                        }
                     }
+
                 }
             }
         }

@@ -34,7 +34,7 @@ import static com.amobletool.bluetooth.le.downexample.MyApp.mNotifyCharacteristi
  */
 
 public class AssignFragment extends MVPBaseFragment<AssignContract.View, AssignPresenter> implements
-        AssignContract.View, AdapterView.OnItemClickListener, View.OnClickListener,AdapterView.OnItemLongClickListener {
+        AssignContract.View, AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemLongClickListener {
 
     private ListView rv_content;
     //    private Button btn_commit;
@@ -105,14 +105,20 @@ public class AssignFragment extends MVPBaseFragment<AssignContract.View, AssignP
                 }
                 LiuCheng unique = MyApp.getDaoInstant().getLiuChengDao().queryBuilder()
                         .where(LiuChengDao.Properties.Id.eq(liuChengs.get(position).getId())).unique();
-                String renWuCode = unique.getCode();
+                final String renWuCode = unique.getCode();
                 MyApp.getInstance().writeCharacteristic3(renWuCode);
                 MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
                     @Override
                     public void getData(String data) {
                         int ff = DataManageUtils.jiaoYanData(data, "FF", "0A");
                         if (ff == 0) {
-                            Toast.makeText(getActivity(), "下达成功", Toast.LENGTH_SHORT).show();
+                            String[] split = data.split(" ");
+                            String zhilingCount = split[4];
+                            if ("01".equals(zhilingCount)) {
+                                Toast.makeText(getActivity(), "下达失败,指令已达上限", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), "下达成功", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
                             Toast.makeText(getActivity(), "下达失败", Toast.LENGTH_SHORT).show();
                         }

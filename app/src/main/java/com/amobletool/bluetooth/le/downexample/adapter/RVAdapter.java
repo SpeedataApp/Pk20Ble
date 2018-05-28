@@ -35,7 +35,10 @@ public class RVAdapter extends CommonRvAdapter<Data> {
         setUi(helper, item.getW(), R.id.tv_w, R.id.ll_w);
         setUi(helper, item.getH(), R.id.tv_h, R.id.ll_h);
         setUi(helper, item.getV(), R.id.tv_v, R.id.ll_v);
-        setUi(helper, item.getG(), R.id.tv_g, R.id.ll_g);
+        setUi(helper, item.getBiaoshi(), R.id.tv_biaoshi, R.id.ll_biaoshi);
+        setUi(helper, item.getMac(), R.id.tv_mac, R.id.ll_mac);
+        setUi(helper, item.getName(), R.id.tv_name, R.id.ll_name);
+//        setUi(helper, item.getG(), R.id.tv_g, R.id.ll_g);
     }
 
     private void setUi(BaseAdapterHelper helper, String wangDian, int viewId, int ll) {

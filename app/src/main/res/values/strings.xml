@@ -14,7 +14,7 @@
 -->
 <resources>
     <!-- downexample -->
-    <string name="app_name">快件测量</string>
+    <string name="app_name">Express measurement</string>
     <string name="ble_not_supported">BLE is not supported</string>
     <string name="label_data">Data:</string>
     <string name="label_device_address">Device address:</string>
@@ -34,7 +34,33 @@
     <string name="menu_disconnect">Disconnect</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
-    <string name="device_rssi">rssi信号</string>
+    <string name="device_rssi">rssi</string>
     <string name="text_detail">detail</string>
+    <string name="menu_show">Data Display</string>
+    <string name="menu_set">Setting</string>
+    <string name="set_time">Synchronization Time</string>
+    <string name="set_flash">Clear Flash</string>
+    <string name="set_tv_worker">Set Operator (up to eight Words)</string>
+    <string name="set_worker">Set Operator</string>
+    <string name="set_tv_logo">Set Logo (up to eight Words)</string>
+    <string name="set_logo">Set Logo</string>
+    <string name="set_tv_bili">Set the volume weight ratio coefficient (less than 10000)</string>
+    <string name="set_bili">Set the volume weight ratio coefficient</string>
+    <string name="show_data">The total number of data：</string>
+    <string name="show_update">Uploading</string>
+    <string name="rv_1">ExpressNumber</string>
+    <string name="rv_2">Operator</string>
+    <string name="rv_3">MasterBillNumber</string>
+    <string name="rv_4">SonNumber</string>
+    <string name="rv_5">BranchCode</string>
+    <string name="rv_6">CenterOfTheBarcode</string>
+    <string name="rv_7">PurposeOfTheBarcode</string>
+    <string name="rv_8">DateAndTime</string>
+    <string name="rv_9">Length</string>
+    <string name="rv_10">Width</string>
+    <string name="rv_11">Height</string>
+    <string name="rv_12">VolumeWeight</string>
+    <string name="rv_13">Identify</string>
+    <string name="scan">Connection</string>
 
 </resources>

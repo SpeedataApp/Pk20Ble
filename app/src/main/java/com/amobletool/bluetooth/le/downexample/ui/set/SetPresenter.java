@@ -4,27 +4,24 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.SystemClock;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.MyApp;
+import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.mvp.BasePresenterImpl;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import speedata.com.blelib.bean.SpeedataData;
-import speedata.com.blelib.bean.YouSuData;
 import speedata.com.blelib.bean.ZiKuData;
 import speedata.com.blelib.utils.PK20Utils;
 
+import static com.amobletool.bluetooth.le.downexample.MyApp.cn;
 import static com.amobletool.bluetooth.le.downexample.MyApp.mNotifyCharacteristic3;
 
-/**
- * MVPPlugin
- * 邮箱 784787081@qq.com
- */
 
 public class SetPresenter extends BasePresenterImpl<SetContract.View> implements SetContract.Presenter {
 
@@ -44,7 +41,12 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                 }
             });
         } else {
-            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Please connect the equipment"));
+            }
+
         }
 
     }
@@ -52,9 +54,17 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
     //检验返回的数据
     private void seeResult(int jiaoYanData) {
         if (jiaoYanData == 0) {
-            EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Success"));
+            }
         } else {
-            EventBus.getDefault().post(new MsgEvent("Notification", "设置失败"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "设置失败"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Failed"));
+            }
         }
     }
 
@@ -68,8 +78,25 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
         if (isZiku) {
             checkBackData = PK20Utils.checkSetZiKuBackData(data);
         } else {
-            checkBackData = PK20Utils.checkSetNameBackData(data);
+            checkBackData = PK20Utils.checkSetLOGOBackData(data);
         }
+        count++;
+        if (checkBackData == -1 || checkBackData == -2) {
+            sendData(s1, s2);
+            return -1;
+        } else if (checkBackData == -4) {
+            MyApp.getInstance().writeCharacteristic3(s1);
+            return -1;
+        } else if (checkBackData == -5) {
+            MyApp.getInstance().writeCharacteristic3(s2);
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    private int checkNameResult(String data, String s1, String s2) {
+        int checkBackData = PK20Utils.checkSetNameBackData(data);
         count++;
         if (checkBackData == -1 || checkBackData == -2) {
             sendData(s1, s2);
@@ -92,7 +119,11 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
             int parseInt = Integer.parseInt(s);
             String setRatioData = PK20Utils.getSetRatioData(parseInt);
             if (TextUtils.isEmpty(setRatioData)) {
-                EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+                if (cn) {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+                } else {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "Please enter an effective ratio."));
+                }
                 return;
             }
             if (mNotifyCharacteristic3 != null) {
@@ -105,11 +136,19 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                     }
                 });
             } else {
-                EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+                if (cn) {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+                } else {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "Please connect the equipment"));
+                }
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Please enter an effective ratio."));
+            }
         }
     }
 
@@ -117,6 +156,7 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
     //设置字库
     @Override
     public void setZiKu(final Activity activity, final ProgressDialog progressDialog) {
+        Log.d("ZM", "setZiKu: 开始");
         count = 0;
         i = 0;
         if (mNotifyCharacteristic3 != null) {
@@ -134,8 +174,11 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                                 public void run() {
                                     SystemClock.sleep(50);
                                     if (count > 5) {
-                                        EventBus.getDefault().post(new MsgEvent("Notification"
-                                                , "失败次数过多，请检查设备状态"));
+                                        if (cn) {
+                                            EventBus.getDefault().post(new MsgEvent("Notification", "失败次数过多，请检查设备状态"));
+                                        } else {
+                                            EventBus.getDefault().post(new MsgEvent("Notification", "Too many failures, please check the status of the equipment."));
+                                        }
                                         activity.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -156,10 +199,15 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                                                     progressDialog.cancel();
                                                 }
                                             });
-                                            EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+                                            if (cn) {
+                                                EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+                                            } else {
+                                                EventBus.getDefault().post(new MsgEvent("Notification", "Success"));
+                                            }
                                             return;
                                         }
                                         sendData(ZiKuData.getData1(i), ZiKuData.getData2(i));
+                                        Log.d("ZM", "run: " + i);
                                     }
                                 }
                             }).start();
@@ -170,7 +218,11 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
             }).start();
 
         } else {
-            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Please connect the equipment"));
+            }
             progressDialog.cancel();
         }
     }
@@ -188,19 +240,25 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                 }
             });
         } else {
-            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Please connect the equipment"));
+            }
         }
     }
 
+
     @Override
-    public void setYousu(final Activity activity, final ProgressDialog progressDialog) {
+    public void setLogo(final Activity activity, final ProgressDialog progressDialog, String logo) {
+        final List<String> logoData = PK20Utils.getLOGOData(activity, logo);
         count = 0;
         i = 0;
         if (mNotifyCharacteristic3 != null) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    sendData(YouSuData.getData1(0), YouSuData.getData2(0));
+                    sendData(logoData.get(0), logoData.get(1));
                     MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
                         @Override
                         public void getData(final String data) {
@@ -216,26 +274,32 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                                                 progressDialog.cancel();
                                             }
                                         });
-                                        EventBus.getDefault().post(new MsgEvent("Notification"
-                                                , "失败次数过多，请检查设备状态"));
+                                        if (cn) {
+                                            EventBus.getDefault().post(new MsgEvent("Notification", "失败次数过多，请检查设备状态"));
+                                        } else {
+                                            EventBus.getDefault().post(new MsgEvent("Notification", "Too many failures, please check the status of the equipment."));
+                                        }
                                         return;
                                     }
-                                    int result = checkMoreResult(data, YouSuData.getData1(i),
-                                            YouSuData.getData2(i), false);
+                                    int result = checkMoreResult(data, logoData.get(i), logoData.get(i + 1), false);
                                     if (result == 0) {
                                         count = 0;
-                                        i++;
-                                        if (i == 4) {
+                                        i = i + 2;
+                                        if (i == logoData.size()) {
                                             activity.runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     progressDialog.cancel();
                                                 }
                                             });
-                                            EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+                                            if (cn) {
+                                                EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+                                            } else {
+                                                EventBus.getDefault().post(new MsgEvent("Notification", "Success"));
+                                            }
                                             return;
                                         }
-                                        sendData(YouSuData.getData1(i), YouSuData.getData2(i));
+                                        sendData(logoData.get(i), logoData.get(i + 1));
                                     }
                                 }
                             }).start();
@@ -246,20 +310,34 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
             }).start();
 
         } else {
-            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Please connect the equipment"));
+            }
             progressDialog.cancel();
         }
     }
 
+    /**
+     * 设置操作员姓名
+     *
+     * @param activity
+     * @param progressDialog
+     * @param name
+     */
     @Override
-    public void setSpeedata(final Activity activity, final ProgressDialog progressDialog) {
+    public void setWorkerName(final Activity activity, final ProgressDialog progressDialog, String name) {
+        final List<String> nameData = PK20Utils.getNameSetData(name);
+        List<String> nameDianZhen = PK20Utils.getNameDianZhen(activity, name);
+        nameData.addAll(nameDianZhen);
         count = 0;
         i = 0;
         if (mNotifyCharacteristic3 != null) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    sendData(SpeedataData.getData1(0), SpeedataData.getData2(0));
+                    sendData(nameData.get(0), nameData.get(1));
                     MyApp.getInstance().setGetBluetoothLeDataListener(new MyApp.getBluetoothLeDataListener() {
                         @Override
                         public void getData(final String data) {
@@ -275,26 +353,32 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                                                 progressDialog.cancel();
                                             }
                                         });
-                                        EventBus.getDefault().post(new MsgEvent("Notification"
-                                                , "失败次数过多，请检查设备状态"));
+                                        if (cn) {
+                                            EventBus.getDefault().post(new MsgEvent("Notification", "失败次数过多，请检查设备状态"));
+                                        } else {
+                                            EventBus.getDefault().post(new MsgEvent("Notification", "Too many failures, please check the status of the equipment."));
+                                        }
                                         return;
                                     }
-                                    int result = checkMoreResult(data, SpeedataData.getData1(i),
-                                            SpeedataData.getData2(i), false);
+                                    int result = checkNameResult(data, nameData.get(i), nameData.get(i + 1));
                                     if (result == 0) {
                                         count = 0;
-                                        i++;
-                                        if (i == 4) {
+                                        i = i + 2;
+                                        if (i == nameData.size()) {
                                             activity.runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     progressDialog.cancel();
                                                 }
                                             });
-                                            EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+                                            if (cn) {
+                                                EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+                                            } else {
+                                                EventBus.getDefault().post(new MsgEvent("Notification", "Success"));
+                                            }
                                             return;
                                         }
-                                        sendData(SpeedataData.getData1(i), SpeedataData.getData2(i));
+                                        sendData(nameData.get(i), nameData.get(i + 1));
                                     }
                                 }
                             }).start();
@@ -305,7 +389,11 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
             }).start();
 
         } else {
-            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Please connect the equipment"));
+            }
             progressDialog.cancel();
         }
     }
@@ -323,7 +411,11 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                 }
             });
         } else {
-            EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Please connect the equipment"));
+            }
         }
     }
 
@@ -331,9 +423,21 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
     public void setLeastBili(String s) {
         try {
             int parseInt = Integer.parseInt(s);
+            if (parseInt > 10000) {
+                if (cn) {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+                } else {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "Please enter an effective ratio."));
+                }
+                return;
+            }
             String setRatioData = PK20Utils.getSetLeastRatioData(parseInt);
             if (TextUtils.isEmpty(setRatioData)) {
-                EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+                if (cn) {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+                } else {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "Please enter an effective ratio."));
+                }
                 return;
             }
             if (mNotifyCharacteristic3 != null) {
@@ -346,11 +450,19 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
                     }
                 });
             } else {
-                EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+                if (cn) {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "请连接设备"));
+                } else {
+                    EventBus.getDefault().post(new MsgEvent("Notification", "Please connect the equipment"));
+                }
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+            if (cn) {
+                EventBus.getDefault().post(new MsgEvent("Notification", "请输入有效比例"));
+            } else {
+                EventBus.getDefault().post(new MsgEvent("Notification", "Please enter an effective ratio."));
+            }
         }
     }
 

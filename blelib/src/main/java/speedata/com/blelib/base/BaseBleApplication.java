@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -20,6 +21,7 @@ import speedata.com.blelib.service.BluetoothLeService;
 import speedata.com.blelib.utils.DataManageUtils;
 
 import static speedata.com.blelib.service.BluetoothLeService.ACTION_DATA_AVAILABLE;
+import static speedata.com.blelib.service.BluetoothLeService.ACTION_GATT_CONNECTED;
 import static speedata.com.blelib.service.BluetoothLeService.ACTION_GATT_DISCONNECTED;
 
 /**
@@ -33,6 +35,8 @@ public class BaseBleApplication extends Application {
     public static BluetoothGattCharacteristic mNotifyCharacteristic6 = null;
     private String address = "";
     private String name = "";
+    private int tryAgainConnect = 0;
+    public boolean wantDisconnect = false;
 
     public void bindServiceAndRegisterReceiver(BluetoothDevice device) {
         address = device.getAddress();
@@ -62,6 +66,10 @@ public class BaseBleApplication extends Application {
         }
     };
 
+    public void wantDisconnectBle() {
+        wantDisconnect = true;
+    }
+
     // Handles various events fired by the Service.处理由服务触发的各种事件。
     // ACTION_GATT_CONNECTED: connected to a GATT server.连接到GATT服务器
     // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.与GATT服务器断开连接
@@ -73,15 +81,24 @@ public class BaseBleApplication extends Application {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (ACTION_GATT_DISCONNECTED.equals(action)) {
-                mNotifyCharacteristic3 = null;
-                mNotifyCharacteristic6 = null;
-                mBluetoothLeService.close();
-                mBluetoothLeService = null;
-                address = null;
-                name = null;
-                unregisterReceiver(mGattUpdateReceiver);
-                unbindService(mServiceConnection);
+            if (ACTION_GATT_CONNECTED.equals(action)) {
+                tryAgainConnect = 0;
+            } else if (ACTION_GATT_DISCONNECTED.equals(action)) {
+                tryAgainConnect++;
+                if (tryAgainConnect > 3 || wantDisconnect) {
+                    mBluetoothLeService.close();
+                    mBluetoothLeService = null;
+                    mNotifyCharacteristic3 = null;
+                    mNotifyCharacteristic6 = null;
+                    address = null;
+                    name = null;
+                    unregisterReceiver(mGattUpdateReceiver);
+                    unbindService(mServiceConnection);
+                } else {
+                    connect();
+                }
+
+
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 //显示用户界面上所有受支持的服务和特性。
@@ -124,8 +141,9 @@ public class BaseBleApplication extends Application {
         }
     }
 
-    public void setCharacteristicNotification6(BluetoothGattCharacteristic characteristic,
-                                               boolean enabled) {
+    public void setCharacteristicNotification(BluetoothGattCharacteristic characteristic,
+                                              boolean enabled) {
+        SystemClock.sleep(150);
         mBluetoothLeService.setCharacteristicNotification(characteristic, enabled);
     }
 
@@ -180,9 +198,10 @@ public class BaseBleApplication extends Application {
                 uuid = gattCharacteristic.getUuid().toString();
                 if (uuid.equals("0000fff3-0000-1000-8000-00805f9b34fb")) {
                     mNotifyCharacteristic3 = gattCharacteristic;
+                    setCharacteristicNotification(mNotifyCharacteristic3, true);
                 } else if (uuid.equals("0000fff6-0000-1000-8000-00805f9b34fb")) {
                     mNotifyCharacteristic6 = gattCharacteristic;
-                    setCharacteristicNotification6(mNotifyCharacteristic6, true);
+                    setCharacteristicNotification(mNotifyCharacteristic6, true);
                 }
             }
         }

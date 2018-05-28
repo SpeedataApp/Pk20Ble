@@ -1,19 +1,22 @@
 package com.amobletool.bluetooth.le.downexample.ui.menu;
 
 
+import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.amobletool.bluetooth.le.R;
 import com.amobletool.bluetooth.le.downexample.MyApp;
@@ -23,22 +26,28 @@ import com.amobletool.bluetooth.le.downexample.ui.add.AddActivity;
 import com.amobletool.bluetooth.le.downexample.ui.assign.AssignFragment;
 import com.amobletool.bluetooth.le.downexample.ui.set.SetFragment;
 import com.amobletool.bluetooth.le.downexample.ui.show.ShowFragment;
+import com.kaopiz.kprogresshud.KProgressHUD;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.PermissionListener;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RationaleListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
 
-/**
- * MVPPlugin
- * 邮箱 784787081@qq.com
- */
+import speedata.com.blelib.bean.LWHData;
+
+
 
 public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresenter> implements MenuContract.View, View.OnClickListener {
 
     private TextView device_name;
     private TextView device_address;
-    private ToggleButton btn_serviceStatus;
+    //    private ToggleButton btn_serviceStatus;
+    private LinearLayout ivOn;
     private FrameLayout frame_main;
     private LinearLayout ll;
     private TextView add;
@@ -46,12 +55,25 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
     private TextView show;
     private String whichFragment = "";
     private TextView set;
+    private TextView mTvL;
+    private TextView mTvW;
+    private TextView mTvH;
+    private KProgressHUD kProgressHUD;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_menu);
         EventBus.getDefault().register(this);
+        permission();
+
+        // 初始化 Bluetooth adapter, 通过蓝牙管理器得到一个参考蓝牙适配器(API必须在以上android4.3或以上和版本)
+        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothAdapter mBluetoothAdapter = bluetoothManager.getAdapter();
+        if (!mBluetoothAdapter.isEnabled()) {
+            mBluetoothAdapter.enable();
+        }
+
         initView();
         openFragment(new ShowFragment());
     }
@@ -91,11 +113,13 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
                 Log.d("ZM_connect", "显示连接按键");
                 device_address.setText("Address：" + MyApp.address);
                 device_name.setText("Name：" + MyApp.name);
+                ivOn.setVisibility(View.VISIBLE);
             } else {
                 ll.setVisibility(View.GONE);
                 Log.d("ZM_connect", "隐藏连接按键");
+                ivOn.setVisibility(View.GONE);
             }
-            btn_serviceStatus.setChecked(result);
+//            btn_serviceStatus.setChecked(result);
             Log.d("ZM_connect", "" + result);
 
         } else if ("Notification".equals(type)) {
@@ -104,11 +128,22 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
             Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
         } else if ("Save6DataSuccess".equals(type)) {
             MyApp.getInstance().writeCharacteristic6("AA0A020100000000000000000000000000000200");
+            Log.d("ZM", "接收完成: "+System.currentTimeMillis());
             Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
+        } else if ("LWHData".equals(type)) {
+            LWHData lwhData = (LWHData) msg;
+            mTvH.setText("H:" + lwhData.H);
+            mTvL.setText("L:" + lwhData.L);
+            mTvW.setText("W:" + lwhData.W);
+        } else if ("KP".equals(type)) {
+            boolean isShow = (boolean) msg;
+            if (isShow) {
+                kProgressHUD.show();
+            } else {
+                kProgressHUD.dismiss();
+            }
+
         }
-//        else {
-//            Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
-//        }
 
     }
 
@@ -116,22 +151,25 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
     private void initView() {
         device_name = (TextView) findViewById(R.id.device_name);
         device_address = (TextView) findViewById(R.id.device_address);
-        btn_serviceStatus = (ToggleButton) findViewById(R.id.btn_serviceStatus);
+//        btn_serviceStatus = (ToggleButton) findViewById(btn_serviceStatus);
         frame_main = (FrameLayout) findViewById(R.id.frame_main);
+        ivOn = (LinearLayout) findViewById(R.id.iv_on);
+        ivOn.setOnClickListener(this);
 
-        btn_serviceStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    MyApp.getInstance().connect();
-                    Log.d("ZM_connect", "点击了连接");
-                } else {
-                    MyApp.getInstance().disconnect();
-                    EventBus.getDefault().post(new MsgEvent("ServiceConnectedStatus", false));
-                    Log.d("ZM_connect", "点击了断开");
-                }
-            }
-        });
+//        btn_serviceStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    MyApp.getInstance().connect();
+//                    Log.d("ZM_connect", "点击了连接");
+//                } else {
+//                    MyApp.getInstance().wantDisconnectBle();
+//                    MyApp.getInstance().disconnect();
+//                    ll.setVisibility(View.GONE);
+//                    Log.d("ZM_connect", "点击了断开");
+//                }
+//            }
+//        });
 
         ll = (LinearLayout) findViewById(R.id.ll);
         add = (TextView) findViewById(R.id.add);
@@ -142,7 +180,31 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
         show.setOnClickListener(this);
         set = (TextView) findViewById(R.id.set);
         set.setOnClickListener(this);
+
+
+        mTvL = (TextView) findViewById(R.id.tv_l);
+        mTvW = (TextView) findViewById(R.id.tv_w);
+        mTvH = (TextView) findViewById(R.id.tv_h);
+
+
+        boolean cn = getApplicationContext().getResources().getConfiguration().locale.getCountry().equals("CN");
+        if (cn) {
+            kProgressHUD = KProgressHUD.create(getApplicationContext())
+                    .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                    .setLabel("重连中...")
+                    .setCancellable(false)
+                    .setAnimationSpeed(2)
+                    .setDimAmount(0.5f);
+        } else {
+            kProgressHUD = KProgressHUD.create(getApplicationContext())
+                    .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                    .setLabel("Reconnection...")
+                    .setCancellable(false)
+                    .setAnimationSpeed(2)
+                    .setDimAmount(0.5f);
+        }
     }
+
 
     @Override
     public void onClick(View v) {
@@ -159,7 +221,18 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
             case R.id.set:
                 changeSetImage();
                 break;
+            case R.id.iv_on:
+                closeBle();
+                break;
         }
+    }
+
+    private void closeBle() {
+        MyApp.getInstance().wantDisconnectBle();
+        MyApp.getInstance().disconnect();
+        ll.setVisibility(View.GONE);
+        Log.d("ZM_connect", "点击了断开");
+        ivOn.setVisibility(View.GONE);
     }
 
 
@@ -232,7 +305,12 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
             case KeyEvent.ACTION_DOWN:
                 if ((System.currentTimeMillis() - mkeyTime) > 2000) {
                     mkeyTime = System.currentTimeMillis();
-                    Toast.makeText(MenuActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                    boolean cn = getApplicationContext().getResources().getConfiguration().locale.getCountry().equals("CN");
+                    if (cn) {
+                        Toast.makeText(getApplicationContext(), "再次点击返回退出", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Press the exit again", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     try {
                         finish();
@@ -244,4 +322,35 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
+    private void permission() {
+        AndPermission.with(MenuActivity.this)
+                .permission(Manifest.permission.ACCESS_COARSE_LOCATION
+                        , Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        , Manifest.permission.BLUETOOTH
+                        , Manifest.permission.BLUETOOTH_ADMIN
+                        , Manifest.permission.INTERNET)
+                .callback(listener)
+                .rationale(new RationaleListener() {
+                    @Override
+                    public void showRequestPermissionRationale(int requestCode, Rationale rationale) {
+                        AndPermission.rationaleDialog(MenuActivity.this, rationale).show();
+                    }
+                }).start();
+    }
+
+    PermissionListener listener = new PermissionListener() {
+        @Override
+        public void onSucceed(int requestCode, @NonNull List<String> grantPermissions) {
+        }
+
+        @Override
+        public void onFailed(int requestCode, @NonNull List<String> deniedPermissions) {
+            // 用户否勾选了不再提示并且拒绝了权限，那么提示用户到设置中授权。
+            if (AndPermission.hasAlwaysDeniedPermission(MenuActivity.this, deniedPermissions)) {
+                AndPermission.defaultSettingDialog(MenuActivity.this, 300).show();
+            }
+        }
+    };
 }

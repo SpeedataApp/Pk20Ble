@@ -9,72 +9,103 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <Button
                 android:id="@+id/btn_setTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="设置时间" />
+                android:text="@string/set_time" />
 
 
             <Button
+                android:visibility="gone"
                 android:id="@+id/btn_ziku"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="设置字库" />
+
             <Button
+                android:visibility="gone"
                 android:id="@+id/btn_clean"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="清除流程" />
-            <Button
-                android:id="@+id/btn_yousu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="设置优速快递为公司名" />
-            <Button
-                android:id="@+id/btn_speedata"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="设置思必拓为公司名" />
+
             <Button
                 android:id="@+id/btn_clean_flash"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="清除FLASH" />
+                android:text="@string/set_flash" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="设置体积重比例系数（小于60000）" />
+                android:text="@string/set_tv_worker" />
 
             <EditText
-                android:inputType="number"
-                android:id="@+id/et_bili"
+                android:id="@+id/et_worker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btn_worker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/set_worker" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/set_tv_logo" />
+
+            <EditText
+                android:id="@+id/et_logo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btn_logo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/set_logo" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/set_tv_bili" />
+
+            <EditText
+                android:id="@+id/et_bili"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
 
             <Button
                 android:id="@+id/btn_bili"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="设置体积重比例系数" />
+                android:text="@string/set_bili" />
+
             <TextView
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="设置体积重最小值（小于100）" />
 
             <EditText
-                android:inputType="number"
+                android:visibility="gone"
                 android:id="@+id/et_bili_least"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="number" />
 
             <Button
+                android:visibility="gone"
                 android:id="@+id/btn_bili_least"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -25,10 +25,14 @@ public class Data {
     private String zhu;
     private String zi;
     private String biaoJi;
-    @Generated(hash = 391518261)
+    private String biaoshi;
+    private String mac;
+    private String name;
+    @Generated(hash = 1865355700)
     public Data(String barCode, String wangDian, String center, String muDi,
             String liuCheng, String L, String W, String H, String V, String G,
-            String time, String zhu, String zi, String biaoJi) {
+            String time, String zhu, String zi, String biaoJi, String biaoshi,
+            String mac, String name) {
         this.barCode = barCode;
         this.wangDian = wangDian;
         this.center = center;
@@ -43,6 +47,9 @@ public class Data {
         this.zhu = zhu;
         this.zi = zi;
         this.biaoJi = biaoJi;
+        this.biaoshi = biaoshi;
+        this.mac = mac;
+        this.name = name;
     }
     @Generated(hash = 2135787902)
     public Data() {
@@ -130,6 +137,24 @@ public class Data {
     }
     public void setBiaoJi(String biaoJi) {
         this.biaoJi = biaoJi;
+    }
+    public String getBiaoshi() {
+        return this.biaoshi;
+    }
+    public void setBiaoshi(String biaoshi) {
+        this.biaoshi = biaoshi;
+    }
+    public String getMac() {
+        return this.mac;
+    }
+    public void setMac(String mac) {
+        this.mac = mac;
+    }
+    public String getName() {
+        return this.name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

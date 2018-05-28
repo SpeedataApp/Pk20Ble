@@ -5,8 +5,8 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/ll"
         android:visibility="gone"
+        android:id="@+id/ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -33,6 +33,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/iv_on"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -40,6 +41,7 @@
             android:orientation="vertical">
 
             <ToggleButton
+                android:visibility="gone"
                 android:id="@+id/btn_serviceStatus"
                 style="@style/MyToggleButton"
                 android:layout_width="wrap_content"
@@ -48,7 +50,54 @@
                 android:background="#00000000"
                 android:textOff=""
                 android:textOn="" />
+
+            <ImageView
+                android:background="@drawable/on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/gray"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_l"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="L:10"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_w"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="W:10"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_h"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="H:10"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <FrameLayout
@@ -61,11 +110,12 @@
 
 
     <LinearLayout
-        android:background="@color/gray"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/gray"
         android:orientation="horizontal"
         android:padding="5dp">
+
         <TextView
             android:id="@+id/show"
             android:layout_width="match_parent"
@@ -74,7 +124,7 @@
             android:clickable="true"
             android:drawableTop="@drawable/show"
             android:gravity="center"
-            android:text="数据展示"
+            android:text="@string/menu_show"
             android:textColor="@color/black" />
 
         <TextView
@@ -86,7 +136,8 @@
             android:drawableTop="@drawable/start_black"
             android:gravity="center"
             android:text="流程下达"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/add"
@@ -97,7 +148,8 @@
             android:drawableTop="@drawable/add_black"
             android:gravity="center"
             android:text="流程添加"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/set"
@@ -107,7 +159,7 @@
             android:clickable="true"
             android:drawableTop="@drawable/set_black"
             android:gravity="center"
-            android:text="设置"
+            android:text="@string/menu_set"
             android:textColor="@color/black" />
     </LinearLayout>
 </LinearLayout>

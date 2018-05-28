@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:padding="10dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="快递单号"
+                    android:text="@string/rv_1"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -47,6 +47,36 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rv_2"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/shuxian" />
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/blue"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/ll_zhu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -56,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="主单号　"
+                    android:text="@string/rv_3"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -86,7 +116,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="子单号　"
+                    android:text="@string/rv_4"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -105,6 +135,7 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_wangdian"
                 android:layout_width="wrap_content"
@@ -115,7 +146,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="网点代码"
+                    android:text="@string/rv_5"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -145,7 +176,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="中心条码"
+                    android:text="@string/rv_6"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -164,6 +195,7 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_mudi"
                 android:layout_width="wrap_content"
@@ -174,7 +206,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="目的条码"
+                    android:text="@string/rv_7"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -193,6 +225,7 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_time"
                 android:layout_width="wrap_content"
@@ -203,7 +236,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="时间日期"
+                    android:text="@string/rv_8"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -222,6 +255,7 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_l"
                 android:layout_width="wrap_content"
@@ -230,9 +264,10 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="长　　　"
+                    android:text="@string/rv_9"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -251,6 +286,7 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_w"
                 android:layout_width="wrap_content"
@@ -261,7 +297,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="宽　　　"
+                    android:text="@string/rv_10"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -280,6 +316,7 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_h"
                 android:layout_width="wrap_content"
@@ -290,7 +327,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="高　　　"
+                    android:text="@string/rv_11"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -309,6 +346,7 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_v"
                 android:layout_width="wrap_content"
@@ -319,7 +357,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="体积重　"
+                    android:text="@string/rv_12"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -338,12 +376,14 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_g"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -367,6 +407,69 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/ll_biaoshi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rv_13"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/shuxian" />
+
+                <TextView
+                    android:id="@+id/tv_biaoshi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/blue"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_mac"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MAC　    "
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/shuxian" />
+
+                <TextView
+                    android:id="@+id/tv_mac"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/blue"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
     </LinearLayout>

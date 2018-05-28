@@ -19,10 +19,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-/**
- * MVPPlugin
- * 邮箱 784787081@qq.com
- */
+import java.io.UnsupportedEncodingException;
+
 
 public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
         implements SetContract.View, View.OnClickListener {
@@ -32,13 +30,15 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
     private Button btn_bili;
     private Button btn_ziku;
     private Button btn_clean;
-    private Button btn_yousu;
     private ProgressDialog progressDialog;
-    private Button btn_speedata;
     private Button btn_clean_flash;
     private AlertDialog alertDialog;
     private EditText et_bili_least;
     private Button btn_bili_least;
+    private Button btn_logo;
+    private EditText et_logo;
+    private Button btn_worker;
+    private EditText et_worker;
 
     @Override
     public int getLayout() {
@@ -87,19 +87,22 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
         btn_ziku.setOnClickListener(this);
         btn_clean = (Button) view.findViewById(R.id.btn_clean);
         btn_clean.setOnClickListener(this);
-        btn_yousu = (Button) view.findViewById(R.id.btn_yousu);
-        btn_yousu.setOnClickListener(this);
-        btn_speedata = (Button) view.findViewById(R.id.btn_speedata);
-        btn_speedata.setOnClickListener(this);
         btn_clean_flash = (Button) view.findViewById(R.id.btn_clean_flash);
         btn_clean_flash.setOnClickListener(this);
-        et_bili_least= (EditText) view.findViewById(R.id.et_bili_least);
-        btn_bili_least= (Button) view.findViewById(R.id.btn_bili_least);
+        et_bili_least = (EditText) view.findViewById(R.id.et_bili_least);
+        btn_bili_least = (Button) view.findViewById(R.id.btn_bili_least);
         btn_bili_least.setOnClickListener(this);
+        btn_logo = (Button) view.findViewById(R.id.btn_logo);
+        btn_logo.setOnClickListener(this);
+        et_logo = (EditText) view.findViewById(R.id.et_logo);
+        btn_worker = (Button) view.findViewById(R.id.btn_worker);
+        btn_worker.setOnClickListener(this);
+        et_worker = (EditText) view.findViewById(R.id.et_worker);
     }
 
     @Override
     public void onClick(View v) {
+        boolean cn = getActivity().getResources().getConfiguration().locale.getCountry().equals("CN");
         switch (v.getId()) {
             case R.id.btn_setTime:
                 mPresenter.setTime();
@@ -109,7 +112,11 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
                 break;
             case R.id.btn_ziku:
                 progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setMessage("设置字库中...");
+                if (cn) {
+                    progressDialog.setMessage("设置中...");
+                } else {
+                    progressDialog.setMessage("Setting...");
+                }
                 progressDialog.setCancelable(false);
                 progressDialog.show();
                 mPresenter.setZiKu(getActivity(), progressDialog);
@@ -117,43 +124,126 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
             case R.id.btn_clean:
                 mPresenter.setClean();
                 break;
-            case R.id.btn_yousu:
+            case R.id.btn_logo:
+                String logo = et_logo.getText().toString();
+                byte[] gb18030 = new byte[0];
+                try {
+                    gb18030 = logo.getBytes("gb18030");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if (gb18030.length > 8) {
+                    if (cn) {
+                        Toast.makeText(getActivity(), "LOGO不能超过四个中文", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "No more than eight Words.", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
+//                boolean chineseName = StringUtils.isChinese(logo);
+//                if (!chineseName) {
+//                    if (cn) {
+//                        Toast.makeText(getActivity(), "LOGO必须为中文", Toast.LENGTH_LONG).show();
+//                    } else {
+//                        Toast.makeText(getActivity(), "Must be Chinese", Toast.LENGTH_LONG).show();
+//                    }
+//                    return;
+//                }
+
                 progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setMessage("设置新公司名称中...");
+                if (cn) {
+                    progressDialog.setMessage("设置中...");
+                } else {
+                    progressDialog.setMessage("Setting...");
+                }
                 progressDialog.setCancelable(false);
                 progressDialog.show();
-                mPresenter.setYousu(getActivity(), progressDialog);
+                mPresenter.setLogo(getActivity(), progressDialog, logo);
                 break;
-            case R.id.btn_speedata:
+
+            case R.id.btn_worker:
+                String worker = et_worker.getText().toString();
+                byte[] gb18030s = new byte[0];
+                try {
+                    gb18030s = worker.getBytes("gb18030");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if (gb18030s.length > 8) {
+                    if (cn) {
+                        Toast.makeText(getActivity(), "LOGO不能超过四个中文", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "No more than eight Words.", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
+//                boolean chineseWorker = StringUtils.isChinese(worker);
+//                if (!chineseWorker) {
+//                    if (cn) {
+//                        Toast.makeText(getActivity(), "操作员姓名必须为中文", Toast.LENGTH_LONG).show();
+//                    } else {
+//                        Toast.makeText(getActivity(), "Must be Chinese", Toast.LENGTH_LONG).show();
+//                    }
+//                    return;
+//                }
+
                 progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setMessage("设置新公司名称中...");
+                if (cn) {
+                    progressDialog.setMessage("设置中...");
+                } else {
+                    progressDialog.setMessage("Setting...");
+                }
+
                 progressDialog.setCancelable(false);
                 progressDialog.show();
-                mPresenter.setSpeedata(getActivity(), progressDialog);
+                mPresenter.setWorkerName(getActivity(), progressDialog, worker);
                 break;
+
             case R.id.btn_clean_flash:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 final EditText editText = new EditText(getActivity());
                 builder.setView(editText);
-                builder.setMessage("输入密码");
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        alertDialog.dismiss();
-                    }
-                });
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String text = editText.getText().toString();
-                        if ("0000".equals(text)) {
-                            mPresenter.setCleanFlash();
+                if (cn) {
+                    builder.setMessage("设置密码");
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
                             alertDialog.dismiss();
-                        } else {
-                            Toast.makeText(getActivity(), "密码错误", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                });
+                    });
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String text = editText.getText().toString();
+                            if ("0000".equals(text)) {
+                                mPresenter.setCleanFlash();
+                                alertDialog.dismiss();
+                            } else {
+                                Toast.makeText(getActivity(), "密码错误", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                } else {
+                    builder.setMessage("Password");
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String text = editText.getText().toString();
+                            if ("0000".equals(text)) {
+                                mPresenter.setCleanFlash();
+                                alertDialog.dismiss();
+                            } else {
+                                Toast.makeText(getActivity(), "wrong password", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
                 alertDialog = builder.create();
                 alertDialog.show();
                 break;

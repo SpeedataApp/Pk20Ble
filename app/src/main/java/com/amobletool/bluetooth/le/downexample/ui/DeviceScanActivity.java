@@ -48,7 +48,6 @@ import com.amobletool.bluetooth.le.R;
 import com.amobletool.bluetooth.le.downexample.MyApp;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -165,6 +164,7 @@ public class DeviceScanActivity extends ListActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 
     @Override
     protected void onPause() {
@@ -306,14 +306,14 @@ public class DeviceScanActivity extends ListActivity {
             mLeDeviceListAdapter.notifyDataSetChanged();
         }
 
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            super.onBatchScanResults(results);
-            for (int i = 0; i < results.size(); i++) {
-                mLeDeviceListAdapter.addDevice(results.get(i).getDevice());
-                mLeDeviceListAdapter.notifyDataSetChanged();
-            }
-        }
+//        @Override
+//        public void onBatchScanResults(List<ScanResult> results) {
+//            super.onBatchScanResults(results);
+//            for (int i = 0; i < results.size(); i++) {
+//                mLeDeviceListAdapter.addDevice(results.get(i).getDevice());
+//                mLeDeviceListAdapter.notifyDataSetChanged();
+//            }
+//        }
 
         @Override
         public void onScanFailed(int errorCode) {

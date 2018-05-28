@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">快件测量</string>
+    <string name="ble_not_supported">你的手机不支持BLE</string>
+    <string name="label_data">数据:</string>
+    <string name="label_device_address">设备地址:</string>
+    <string name="label_state">状态:</string>
+    <string name="no_data">无数据</string>
+    <string name="connected">已连接</string>
+    <string name="disconnected">已断开连接</string>
+    <string name="title_devices">BLE 设备扫描</string>
+    <string name="error_bluetooth_not_supported">你的手机不支持蓝牙</string>
+
+    <string name="unknown_device">未知设备</string>
+    <string name="unknown_characteristic">未知特征值</string>
+    <string name="unknown_service">未知服务</string>
+
+    <!-- Menu items -->
+    <string name="menu_connect">已连接</string>
+    <string name="menu_disconnect">已断开</string>
+    <string name="menu_scan">搜索</string>
+    <string name="menu_stop">停止</string>
+    <string name="device_rssi">信号</string>
+    <string name="text_detail">详述</string>
+    <string name="menu_show">数据展示</string>
+    <string name="menu_set">设置</string>
+    <string name="set_time">同步时间</string>
+    <string name="set_flash">清除缓存</string>
+    <string name="set_tv_worker">设置操作员（最多显示四个中文）</string>
+    <string name="set_worker">设置操作员</string>
+    <string name="set_tv_logo">设置LOGO（最多显示四个中文）</string>
+    <string name="set_logo">设置logo名称</string>
+    <string name="set_tv_bili">设置体积重比例系数（小于10000）</string>
+    <string name="set_bili">设置体积重比例系数</string>
+    <string name="show_data">数据总数：</string>
+    <string name="show_update">上传</string>
+    <string name="rv_1">快递单号</string>
+    <string name="rv_2">操作员　</string>
+    <string name="rv_3">主单号　</string>
+    <string name="rv_4">子单号　</string>
+    <string name="rv_5">网点代码</string>
+    <string name="rv_6">中心条码</string>
+    <string name="rv_7">目的条码</string>
+    <string name="rv_8">时间日期</string>
+    <string name="rv_9">长度　　</string>
+    <string name="rv_10">宽度　　</string>
+    <string name="rv_11">高度　　</string>
+    <string name="rv_12">体积重　</string>
+    <string name="rv_13">标识位　</string>
+    <string name="scan">连接设备</string>
+</resources>
