@@ -6,14 +6,17 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amobletool.bluetooth.le.R;
 import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.mvp.MVPBaseFragment;
+import com.amobletool.bluetooth.le.downexample.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,6 +42,7 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
     private EditText et_logo;
     private Button btn_worker;
     private EditText et_worker;
+    private TextView tv_version;
 
     @Override
     public int getLayout() {
@@ -98,6 +102,8 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
         btn_worker = (Button) view.findViewById(R.id.btn_worker);
         btn_worker.setOnClickListener(this);
         et_worker = (EditText) view.findViewById(R.id.et_worker);
+        tv_version = (TextView) view.findViewById(R.id.tv_version);
+        tv_version.setText("V" + Utils.getVerName(getActivity()));
     }
 
     @Override
@@ -126,6 +132,14 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
                 break;
             case R.id.btn_logo:
                 String logo = et_logo.getText().toString();
+                if (TextUtils.isEmpty(logo)) {
+                    if (cn) {
+                        Toast.makeText(getActivity(), "LOGO不能为空", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Can not be empty.", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
                 byte[] gb18030 = new byte[0];
                 try {
                     gb18030 = logo.getBytes("gb18030");
@@ -163,6 +177,14 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
 
             case R.id.btn_worker:
                 String worker = et_worker.getText().toString();
+                if (TextUtils.isEmpty(worker)) {
+                    if (cn) {
+                        Toast.makeText(getActivity(), "操作员姓名不能为空", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Can not be empty.", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
                 byte[] gb18030s = new byte[0];
                 try {
                     gb18030s = worker.getBytes("gb18030");
