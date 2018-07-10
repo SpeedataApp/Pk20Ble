@@ -148,7 +148,7 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
                 }
                 if (gb18030.length > 8) {
                     if (cn) {
-                        Toast.makeText(getActivity(), "LOGO不能超过四个中文", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "LOGO字符长度超限", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getActivity(), "No more than eight Words.", Toast.LENGTH_LONG).show();
                     }
@@ -193,7 +193,7 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
                 }
                 if (gb18030s.length > 8) {
                     if (cn) {
-                        Toast.makeText(getActivity(), "LOGO不能超过四个中文", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "操作员姓名字符长度超限", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getActivity(), "No more than eight Words.", Toast.LENGTH_LONG).show();
                     }

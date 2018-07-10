@@ -394,9 +394,9 @@ public class BluetoothLeService extends Service {
                 }
 
                 String vStr = DataManageUtils.getV(mByteNewList.get(2));
-                int v = 0;
+                long v = 0;
                 if (!vStr.equals("ffffffff")) {
-                    v = Integer.parseInt(vStr, 16);
+                    v = Long.parseLong(vStr, 16);
                     double tijizhong = (double) v / 100;
                     itemV = tijizhong + "";
                 }

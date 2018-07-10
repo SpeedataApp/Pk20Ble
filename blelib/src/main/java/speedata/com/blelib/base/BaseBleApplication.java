@@ -158,7 +158,9 @@ public class BaseBleApplication extends Application {
     }
 
     public void disconnect() {
-        mBluetoothLeService.disconnect();
+        if (mBluetoothLeService != null) {
+            mBluetoothLeService.disconnect();
+        }
     }
 
     public interface getBluetoothLeDataListener {

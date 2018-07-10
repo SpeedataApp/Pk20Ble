@@ -41,7 +41,6 @@ import java.util.List;
 import speedata.com.blelib.bean.LWHData;
 
 
-
 public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresenter> implements MenuContract.View, View.OnClickListener {
 
     private TextView device_name;
@@ -128,7 +127,7 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
             Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
         } else if ("Save6DataSuccess".equals(type)) {
             MyApp.getInstance().writeCharacteristic6("AA0A020100000000000000000000000000000200");
-            Log.d("ZM", "接收完成: "+System.currentTimeMillis());
+            Log.d("ZM", "接收完成: " + System.currentTimeMillis());
             Toast.makeText(MenuActivity.this, (String) msg, Toast.LENGTH_SHORT).show();
         } else if ("LWHData".equals(type)) {
             LWHData lwhData = (LWHData) msg;
@@ -313,6 +312,7 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
                     }
                 } else {
                     try {
+                        closeBle();
                         finish();
                     } catch (Exception e) {
                         e.printStackTrace();
