@@ -62,24 +62,7 @@ public abstract class MVPBaseActivity<V extends BaseView,T extends BasePresenter
         startActivity(intent);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.scan, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_scan:
-                openAct(this, DeviceScanActivity.class);
-                break;
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return true;
-    }
 
 
     private static final int containerViewId = R.id.frame_main;

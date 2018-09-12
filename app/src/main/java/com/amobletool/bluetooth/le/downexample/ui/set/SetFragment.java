@@ -24,6 +24,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.UnsupportedEncodingException;
 
+import speedata.com.blelib.utils.StringUtils;
+
 
 public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
         implements SetContract.View, View.OnClickListener {
@@ -132,6 +134,15 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
                 break;
             case R.id.btn_logo:
                 String logo = et_logo.getText().toString();
+                boolean isSpecial = StringUtils.isSpecial(logo);
+                if (isSpecial) {
+                    if (cn) {
+                        Toast.makeText(getActivity(), "不能包含特殊符号", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Special symbols cannot be included", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
                 if (TextUtils.isEmpty(logo)) {
                     if (cn) {
                         Toast.makeText(getActivity(), "LOGO不能为空", Toast.LENGTH_LONG).show();
@@ -177,6 +188,15 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
 
             case R.id.btn_worker:
                 String worker = et_worker.getText().toString();
+                boolean workerIsSpecial = StringUtils.isSpecial(worker);
+                if (workerIsSpecial) {
+                    if (cn) {
+                        Toast.makeText(getActivity(), "不能包含特殊符号", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Special symbols cannot be included", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
                 if (TextUtils.isEmpty(worker)) {
                     if (cn) {
                         Toast.makeText(getActivity(), "操作员姓名不能为空", Toast.LENGTH_LONG).show();
@@ -226,7 +246,7 @@ public class SetFragment extends MVPBaseFragment<SetContract.View, SetPresenter>
                 final EditText editText = new EditText(getActivity());
                 builder.setView(editText);
                 if (cn) {
-                    builder.setMessage("设置密码");
+                    builder.setMessage("输入密码");
                     builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

@@ -12,6 +12,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -22,11 +24,13 @@ import com.amobletool.bluetooth.le.R;
 import com.amobletool.bluetooth.le.downexample.MyApp;
 import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.mvp.MVPBaseActivity;
+import com.amobletool.bluetooth.le.downexample.ui.DeviceScanActivity;
 import com.amobletool.bluetooth.le.downexample.ui.add.AddActivity;
 import com.amobletool.bluetooth.le.downexample.ui.assign.AssignFragment;
 import com.amobletool.bluetooth.le.downexample.ui.set.SetFragment;
 import com.amobletool.bluetooth.le.downexample.ui.show.ShowFragment;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.PermissionListener;
 import com.yanzhenjie.permission.Rationale;
@@ -353,4 +357,25 @@ public class MenuActivity extends MVPBaseActivity<MenuContract.View, MenuPresent
             }
         }
     };
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.scan, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_scan:
+                closeBle();
+                openAct(this, DeviceScanActivity.class);
+                break;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return true;
+    }
 }

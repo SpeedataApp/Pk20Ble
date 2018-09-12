@@ -26,6 +26,11 @@ import java.util.regex.Pattern;
 public class StringUtils {
 
 
+    public static boolean isSpecial(String str) {
+        String regex = "^[a-z0-9A-Z\u4e00-\u9fa5]+$";
+        return !str.matches(regex);
+    }
+
     /**
      * 判断是否是中文名字
      *

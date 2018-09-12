@@ -51,7 +51,7 @@ public class PK20Utils {
      * @return 设置比例的发送数据
      */
     public static String getSetRatioData(int ratio) {
-        if (ratio > 10000) {
+        if (ratio > 10000 || ratio < 1) {
             return null;
         }
         int high = ratio >> 8 & 0xff;
@@ -491,6 +491,7 @@ public class PK20Utils {
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+                return null;
             }
         }
         if (part5 != null) {

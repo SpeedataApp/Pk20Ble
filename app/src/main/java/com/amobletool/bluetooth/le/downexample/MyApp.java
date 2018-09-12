@@ -17,6 +17,7 @@ import com.amobletool.bluetooth.le.downexample.bean.Data;
 import com.amobletool.bluetooth.le.downexample.bean.MsgEvent;
 import com.amobletool.bluetooth.le.downexample.bean.Word;
 import com.amobletool.bluetooth.le.downexample.bean.WordDao;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -64,6 +65,8 @@ public class MyApp extends BaseBleApplication {
     public void onCreate() {
         super.onCreate();
         m_application = this;
+        CrashReport.initCrashReport(getApplicationContext(), "646be3d468", true);
+
         setupDatabase();
 //        boolean haveWord = SharedXmlUtil.getInstance(this).read("haveWord", false);
 //        if (!haveWord) {
@@ -206,33 +209,33 @@ public class MyApp extends BaseBleApplication {
 
 
     //创建字库
-    private void makeWordKu() {
-        final String[] idStr = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "0A", "0B", "0C", "0D", "0E", "0F",
-                "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E", "1F",
-                "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "2A", "2B", "2C", "2D", "2E", "2F",
-                "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "3A", "3B", "3C", "3D", "3E", "3F",
-                "40", "41", "42", "43", "44", "45"};
-        final String[] wordStr = {"上", "级", "地", "网", "点", "代", "新", "目", "的", "实", "际", "重", "量",
-                "低", "体", "积", "测", "快", "件", "并", "发", "中", "心", "连", "接", "揽", "收", "和",
-                "成", "功", "失", "败", "稍", "等", "传", "蓝", "牙", "秤", "条", "码", "清", "除", "保",
-                "存", "充", "电", "长", "宽", "高", "请", "主", "子", "单", "号", "从", "称", "扫", "描",
-                "到", "已", "提", "取", "未", "全", "部", "数", "据", "时", "间"};
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    WordDao wordDao = getDaoInstant().getWordDao();
-                    for (int i = 0; i < idStr.length; i++) {
-                        Word word = new Word();
-                        word.setId(idStr[i]);
-                        word.setWord(wordStr[i]);
-                        wordDao.insertOrReplace(word);
-                    }
-                    EventBus.getDefault().post(new MsgEvent("", "字库添加成功"));
-                } catch (Exception e) {
-                    EventBus.getDefault().post(new MsgEvent("", "字库添加失败"));
-                }
-            }
-        }).start();
-    }
+//    private void makeWordKu() {
+//        final String[] idStr = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "0A", "0B", "0C", "0D", "0E", "0F",
+//                "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E", "1F",
+//                "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "2A", "2B", "2C", "2D", "2E", "2F",
+//                "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "3A", "3B", "3C", "3D", "3E", "3F",
+//                "40", "41", "42", "43", "44", "45"};
+//        final String[] wordStr = {"上", "级", "地", "网", "点", "代", "新", "目", "的", "实", "际", "重", "量",
+//                "低", "体", "积", "测", "快", "件", "并", "发", "中", "心", "连", "接", "揽", "收", "和",
+//                "成", "功", "失", "败", "稍", "等", "传", "蓝", "牙", "秤", "条", "码", "清", "除", "保",
+//                "存", "充", "电", "长", "宽", "高", "请", "主", "子", "单", "号", "从", "称", "扫", "描",
+//                "到", "已", "提", "取", "未", "全", "部", "数", "据", "时", "间"};
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    WordDao wordDao = getDaoInstant().getWordDao();
+//                    for (int i = 0; i < idStr.length; i++) {
+//                        Word word = new Word();
+//                        word.setId(idStr[i]);
+//                        word.setWord(wordStr[i]);
+//                        wordDao.insertOrReplace(word);
+//                    }
+//                    EventBus.getDefault().post(new MsgEvent("", "字库添加成功"));
+//                } catch (Exception e) {
+//                    EventBus.getDefault().post(new MsgEvent("", "字库添加失败"));
+//                }
+//            }
+//        }).start();
+//    }
 }

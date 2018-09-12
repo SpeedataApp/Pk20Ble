@@ -55,13 +55,13 @@ public class SetPresenter extends BasePresenterImpl<SetContract.View> implements
     private void seeResult(int jiaoYanData) {
         if (jiaoYanData == 0) {
             if (cn) {
-                EventBus.getDefault().post(new MsgEvent("Notification", "设置成功"));
+                EventBus.getDefault().post(new MsgEvent("Notification", "成功"));
             } else {
                 EventBus.getDefault().post(new MsgEvent("Notification", "Success"));
             }
         } else {
             if (cn) {
-                EventBus.getDefault().post(new MsgEvent("Notification", "设置失败"));
+                EventBus.getDefault().post(new MsgEvent("Notification", "失败"));
             } else {
                 EventBus.getDefault().post(new MsgEvent("Notification", "Failed"));
             }
